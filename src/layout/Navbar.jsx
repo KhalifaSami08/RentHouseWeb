@@ -99,7 +99,7 @@ const NavBar = () => {
                 variant="h6" 
                 color="secondary"
                 noWrap>
-                RENTHOUSE
+                RENTHOUSE PROJECT S.K.
               </Typography>
             </Link>
           </Grid>

@@ -1,6 +1,6 @@
 import React from 'react';
 // import axios from 'axios';
-import MuiAlert from '@material-ui/lab/Alert';
+// import MuiAlert from '@material-ui/lab/Alert';
 import {
     TextField,
     Select,
@@ -53,15 +53,12 @@ const Create = () => {
 
     const stateDefaultValues = {
 
-        adress: "",
+        adress: "Rue ",
         type: "Flat",
-        floor: "",
+        floor: 0,
         nbRoom: 1,
         totalArea: "",
-        everyRoomArea:{
-            name:{},
-            area:{}
-        },
+        everyRoomArea:[],
         diningRoomArea:"",
         kitchenArea:"",
         rentCost:"",
@@ -73,16 +70,17 @@ const Create = () => {
 
     /* const [snackbarValid,setsnackbarValid] = React.useState({
 
-        success:false,
-        warning:false,
-        info:false,
+        valid:false,
+        reset:false,
+        imageUpload:false,
         error:false,
     });
  */
     const handleChange = e => {
         const eId = e.currentTarget.id;
-        // console.log(eId+" -> "+e.target.value);
+        console.log(eId+" -> "+e.target.value);
         setState({...state, [eId]:e.target.value});
+        console.log(state);
     }
 
     const fileSelectedHandler = e =>{
@@ -91,20 +89,18 @@ const Create = () => {
         setState({...state , selectedFile:selFile })
     }
 
-    function Alert(props) {
+    /* function Alert(props) {
         return <MuiAlert elevation={6} variant="filled" {...props} />;
-    }
+    } */
 
 
     const handleOnSubmit = e => {
         console.log(state);
         e.preventDefault();
-        
     }
 
     const clearBtn = e => {
         setState(stateDefaultValues);
-       
     }
 
     const final = [];
@@ -119,24 +115,24 @@ const Create = () => {
                 alignItems="center"
             >
                 <TextField 
-                    id={'everyRoomArea.name'+[i]}
+                    id={[i]+'N'}
                     label="Nom de la piéce"
                     className={classes.element}
                     color="secondary"
                     variant="outlined"
-                    value={state.everyRoomArea.name[i]}
+                    value={state.everyRoomArea[i]}
                     onChange={handleChange}
                     required
                     
                 />
                 <TextField 
-                    id={'everyRoomArea.area'+[i]}
+                    id={[i]+'A'}
                     label="Aire de la piéce"
                     className={classes.element}
                     type="number"
                     color="secondary"
                     variant="outlined"
-                    value={state.everyRoomArea.area[i]}
+                    value={state.everyRoomArea[i]}
                     onChange={handleChange}
                     required
                     InputProps={{

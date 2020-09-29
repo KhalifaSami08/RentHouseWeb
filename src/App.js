@@ -6,8 +6,7 @@ import Navbar from './layout/Navbar';
 import Error from './component/Error';
 import Home from './component/Home';
 import Create from './component/CRUD/Create';
-import Read from './component/CRUD/Read';
-import Update from './component/CRUD/Update';
+// import Update from './component/CRUD/Update';
 
 import Profile from './component/Owner';
 
@@ -29,8 +28,7 @@ const ownerRoutes = ({match}) => (
   <>
       <Route exact path={match.url + "/"} component={Profile}/>
       <Route exact path={match.url + "/Create"} component={Create}/>
-      <Route exact path={match.url + "/Read/:id"} component={Read}/>
-      <Route exact path={match.url + "/Update/:id"} component={Update}/>
+      {/* <Route exact path={match.url + "/Update/:id"} component={Update}/> */}
   </>
 );
 
