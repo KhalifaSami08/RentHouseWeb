@@ -1,14 +1,19 @@
 import React from 'react';
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route, 
+} from 'react-router-dom';
 
 import Navbar from './layout/Navbar';
 
 import Error from './component/Error';
 import Home from './component/Home';
-import Create from './component/CRUD/Create';
+import CreateProperty from './component/CRUD/CreateProperty';
+import CreateClient from './component/CRUD/CreateClient';
 // import Update from './component/CRUD/Update';
 
-import Profile from './component/Owner';
+import AdminProfile from './component/AdminProfile';
 
 const App = () => {
   return (
@@ -16,7 +21,8 @@ const App = () => {
       <Navbar />
       <Switch>
         <Route exact path={"/"} component={Home}/>  
-        <Route path={"/Owner"} component={ownerRoutes}/>
+        {/* <Route exact path={"/"} component={ownerRoutes}/>   */}
+        <Route path={"/AdminProfile"} component={ownerRoutes}/>
         
         <Route component={Error} />
       </Switch>
@@ -26,9 +32,17 @@ const App = () => {
 
 const ownerRoutes = ({match}) => (
   <>
-      <Route exact path={match.url + "/"} component={Profile}/>
-      <Route exact path={match.url + "/Create"} component={Create}/>
-      {/* <Route exact path={match.url + "/Update/:id"} component={Update}/> */}
+    <Router>
+      <Switch>
+        <Route exact path={match.url + "/"} component={AdminProfile}/>
+        <Route exact path={match.url + "/CreateProperty"} component={CreateProperty}/>
+        <Route exact path={match.url + "/Update/:idParam"} component={CreateProperty}/>
+
+        <Route exact path={match.url + "/CreateClient"} component={CreateClient}/>
+        <Route component={Error} />
+      </Switch>
+    </Router>
+      
   </>
 );
 

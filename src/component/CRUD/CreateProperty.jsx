@@ -1,5 +1,6 @@
 import React from 'react';
-// import axios from 'axios';
+import axios from 'axios';
+import { useParams } from "react-router-dom";
 // import MuiAlert from '@material-ui/lab/Alert';
 import {
     TextField,
@@ -47,26 +48,52 @@ const useStyles = makeStyles((theme) =>
     }),
 );
 
-const Create = () => { 
+const CreateProperty = () => { 
 
     const classes = useStyles();
+    const { idParam } = useParams();
 
     const stateDefaultValues = {
 
-        adress: "Rue ",
-        type: "Flat",
+        adress: "Rue ...",
+        type: "flat",
         floor: 0,
         nbRoom: 1,
-        totalArea: "",
+        totalArea: 0,
         everyRoomArea:[],
-        diningRoomArea:"",
-        kitchenArea:"",
-        rentCost:"",
-        fixedChargesCost:"",
-        selectedFile:null,
+        diningRoomArea:0,
+        kitchenArea:0,
+        rentCost:0,
+        fixedChargesCost:0,
+        imageLink:null,
     }
 
     const [state,setState] = React.useState(stateDefaultValues);
+    const [roomArea,setRoomArea] = React.useState([]);
+    const [isUpdateStatus, setUpdateStatus] = React.useState(false);
+
+    const getProperty = async () => {
+        await axios.get("http://localhost:5000/api/property/"+idParam)
+        .then(res => setState(res.data))
+        .catch(err => console.log(err));
+        console.log("Property get ok ! ");
+    }
+
+    React.useEffect(() => {
+    
+        console.log("ID : "+idParam);
+
+        if(idParam !== undefined){
+            getProperty();
+            console.log(state);
+            console.log('Update ');
+            setUpdateStatus(true);
+        }
+        else{
+            console.log('Create ');
+        }
+    }, []);
+      
 
     /* const [snackbarValid,setsnackbarValid] = React.useState({
 
@@ -83,6 +110,13 @@ const Create = () => {
         console.log(state);
     }
 
+    const handleChangeRoomArea = e => {
+        const eId = e.currentTarget.id;
+        console.log(eId+" -> "+e.target.value);
+        setRoomArea({...roomArea, [eId]:e.target.value});
+        console.log(roomArea);
+    }
+
     const fileSelectedHandler = e =>{
         let selFile = e.target.files[0];
         console.log(selFile);
@@ -97,6 +131,18 @@ const Create = () => {
     const handleOnSubmit = e => {
         console.log(state);
         e.preventDefault();
+
+        if(isUpdateStatus){
+            axios.put("http://localhost:5000/api/property/"+idParam , state)
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+        }
+        else{
+            axios.post("http://localhost:5000/api/property/" , state)
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+        }
+
     }
 
     const clearBtn = e => {
@@ -115,26 +161,24 @@ const Create = () => {
                 alignItems="center"
             >
                 <TextField 
-                    id={[i]+'N'}
+                    id={'idRoom'+i}
                     label="Nom de la piéce"
                     className={classes.element}
                     color="secondary"
                     variant="outlined"
-                    value={state.everyRoomArea[i]}
-                    onChange={handleChange}
-                    required
+                    value={roomArea.idRoom}
+                    onChange={handleChangeRoomArea}
                     
                 />
                 <TextField 
-                    id={[i]+'A'}
+                    id={'labelRoom'+i}
                     label="Aire de la piéce"
                     className={classes.element}
                     type="number"
                     color="secondary"
                     variant="outlined"
-                    value={state.everyRoomArea[i]}
-                    onChange={handleChange}
-                    required
+                    value={roomArea.labelRoom}
+                    onChange={handleChangeRoomArea}
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -198,9 +242,9 @@ const Create = () => {
                     startAdornment={<HomeWorkIcon />}
                 >
                     
-                    <MenuItem id="type" value="Flat">Appartement</MenuItem>
-                    <MenuItem id="type" value="House">Maison</MenuItem>
-                    <MenuItem id="type" value="Room">Chambre</MenuItem>
+                    <MenuItem id="type" value="flat">Appartement</MenuItem>
+                    <MenuItem id="type" value="house">Maison</MenuItem>
+                    <MenuItem id="type" value="room">Chambre</MenuItem>
                 </Select>  
 
                 <TextField 
@@ -431,7 +475,7 @@ const Create = () => {
                                 id="iconButton"
                                 className={classes.element}
                                 component="span"
-                                color={state.selectedFile===null?"secondary":"primary"}
+                                color={state.imageLink===null?"secondary":"primary"}
                                 required
                             >
                                 <AddPhotoAlternateIcon />
@@ -440,14 +484,14 @@ const Create = () => {
                         </label>
 
                        <label htmlFor="iconButton">
-                            {state.selectedFile===null?'':state.selectedFile.name}
+                            {state.imageLink===null?'':state.imageLink.name}
                         </label>
 
                         {/* <Button
                             className={classes.element}
                             // onClick={fileUploadHandler}
                             variant="contained"
-                            color={state.selectedFile===null?"secondary":"primary"}
+                            color={state.imageLink===null?"secondary":"primary"}
                         > 
                             Upload Image 
                         </Button> */}
@@ -499,4 +543,4 @@ const Create = () => {
     )
 }
 
-export default Create;
+export default CreateProperty;

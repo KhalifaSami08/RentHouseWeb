@@ -40,41 +40,6 @@ const useStyles = makeStyles((theme) =>
     profile: {
       flexGrow: 1,
     },
-   /*  search: {
-      position: 'relative',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: theme.palette.secondary,
-      width: '70%',
-    //   marginRight: theme.spacing(2),
-    
-      [theme.breakpoints.between('xs', 'sm')]: {
-        marginRight: theme.spacing(1),
-      },
-      [theme.breakpoints.between('sm','lg')]: {
-        marginRight: theme.spacing(6),
-      },
-      [theme.breakpoints.up('lg')]: {
-        marginRight: theme.spacing(12),
-      },
-    },
-    searchIcon: {
-      padding: theme.spacing(2),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    inputRoot: {
-      color: 'inherit',
-    },
-    inputInput: {
-      padding: theme.spacing(1),
-      // Separation between search icon and begin of placeholder
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create('width'),
-      
-    }, */
   }),
 );
 
@@ -104,20 +69,8 @@ const NavBar = () => {
             </Link>
           </Grid>
           
-    {/*  <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Vous recherchez..."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-            />
-          </div> */}
           <IconButton className={classes.profile}>
-            <Link to="/Owner"> 
+            <Link to="/AdminProfile"> 
                   <Badge badgeContent={2} max={5} color="secondary">
                       <AccountCircleRoundedIcon color="secondary" />
                   </Badge>
