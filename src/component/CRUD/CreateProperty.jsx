@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 // import MuiAlert from '@material-ui/lab/Alert';
 import {
     TextField,
@@ -14,6 +14,8 @@ import {
     InputAdornment,
     IconButton,
     Button,
+    FormControlLabel,
+    Checkbox,
     // Snackbar,
 } from '@material-ui/core';
 
@@ -33,6 +35,7 @@ import {
     HomeWork as HomeWorkIcon,
     Dialpad as DialpadIcon,
     GridOn as GridOnIcon,
+    Description as DescriptionIcon,
 } from '@material-ui/icons';
 
 
@@ -52,47 +55,49 @@ const CreateProperty = () => {
 
     const classes = useStyles();
     const { idParam } = useParams();
+    const history = useHistory();
 
     const stateDefaultValues = {
 
-        adress: "Rue ...",
-        type: "flat",
+        adress: "Rue Okay",
+        type: "house",
         floor: 0,
         nbRoom: 1,
-        totalArea: 0,
-        everyRoomArea:[],
-        diningRoomArea:0,
-        kitchenArea:0,
-        rentCost:0,
-        fixedChargesCost:0,
+        totalArea: 234,
+        description:"Belle maison tout ça tout ça",
+        // roomsDetails:[],
+        diningRoomArea:34,
+        kitchenArea:28,
+        rentCost:764,
+        fixedChargesCost:234,
         imageLink:null,
+        isCurrentlyRented:false,
     }
 
     const [state,setState] = React.useState(stateDefaultValues);
-    const [roomArea,setRoomArea] = React.useState([]);
     const [isUpdateStatus, setUpdateStatus] = React.useState(false);
+    
+    const [roomArea,setRoomArea] = React.useState([]);
 
-    const getProperty = async () => {
+    const getProperty = React.useCallback(async (idParam) => {
         await axios.get("http://localhost:5000/api/property/"+idParam)
         .then(res => setState(res.data))
         .catch(err => console.log(err));
         console.log("Property get ok ! ");
-    }
+    },[])
 
-    React.useEffect(() => {
+    // console.log("ID : "+idParam);
+
     
-        console.log("ID : "+idParam);
-
+    React.useEffect(() => {
         if(idParam !== undefined){
-            getProperty();
-            console.log(state);
-            console.log('Update ');
+            getProperty(idParam);
+            // console.log('Update : ');
+            // console.log(state);
             setUpdateStatus(true);
         }
-        else{
-            console.log('Create ');
-        }
-    }, []);
+        
+    },[getProperty, idParam]);
       
 
     /* const [snackbarValid,setsnackbarValid] = React.useState({
@@ -105,22 +110,22 @@ const CreateProperty = () => {
  */
     const handleChange = e => {
         const eId = e.currentTarget.id;
-        console.log(eId+" -> "+e.target.value);
+        // console.log(eId+" -> "+e.target.value);
         setState({...state, [eId]:e.target.value});
-        console.log(state);
+        // console.log(state);
     }
 
     const handleChangeRoomArea = e => {
         const eId = e.currentTarget.id;
-        console.log(eId+" -> "+e.target.value);
+        // console.log(eId+" -> "+e.target.value);
         setRoomArea({...roomArea, [eId]:e.target.value});
-        console.log(roomArea);
+        // console.log(roomArea);
     }
 
     const fileSelectedHandler = e =>{
-        let selFile = e.target.files[0];
-        console.log(selFile);
-        setState({...state , selectedFile:selFile })
+        let selFile = e.target.files[0].name;
+        // console.log(selFile);
+        setState({...state , imageLink:selFile })
     }
 
     /* function Alert(props) {
@@ -128,21 +133,21 @@ const CreateProperty = () => {
     } */
 
 
-    const handleOnSubmit = e => {
-        console.log(state);
+    const handleOnSubmit = async e => {
+        // console.log(state);
         e.preventDefault();
 
         if(isUpdateStatus){
-            axios.put("http://localhost:5000/api/property/"+idParam , state)
+            await axios.put("http://localhost:5000/api/property/"+idParam , state)
             .then(res => console.log(res))
             .catch(err => console.log(err))
         }
         else{
-            axios.post("http://localhost:5000/api/property/" , state)
+            await axios.post("http://localhost:5000/api/property/" , state)
             .then(res => console.log(res))
             .catch(err => console.log(err))
         }
-
+        return history.push('/AdminProfile');
     }
 
     const clearBtn = e => {
@@ -211,8 +216,27 @@ const CreateProperty = () => {
                     alignItems="center"
                     spacing={2}
                 >
-                    
                 
+                <TextField 
+                    id="description"
+                    label="description"
+                    placeholder="description"
+                    className={classes.element}
+                    color="primary"
+                    value={state.description}
+                    onChange={handleChange}
+                    variant="outlined"
+                    required
+                    multiline
+                    rowsMax={3}
+                    InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                                <DescriptionIcon />
+                          </InputAdornment>
+                        ),
+                    }}
+                />
                 <TextField 
                     id="adress"
                     label="Adresse"
@@ -250,14 +274,14 @@ const CreateProperty = () => {
                 <TextField 
                     id="floor"
                     label="Etage n°"
-                    placeholder={state.type==='House'?'(Facultatif)':'(Obligatoire)'}
+                    placeholder={state.type==='house'?'(Facultatif)':'(Obligatoire)'}
                     className={classes.element}
                     type="number"
                     color="primary"
                     value={state.floor}
                     onChange={handleChange}
                     variant="outlined"
-                    required={state.type==='House'?false:true}
+                    required={state.type==='house'?false:true}
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -455,6 +479,13 @@ const CreateProperty = () => {
                             ),
                         }}
                     />
+
+                    <FormControlLabel
+                     disabled 
+                     control={<Checkbox checked={state.isCurrentlyRented} name="checkedE" />} 
+                     label="Logement actuellement loué ? " 
+                     labelPlacement="top"
+                    />
                     
                    
                     <Grid container item
@@ -476,7 +507,6 @@ const CreateProperty = () => {
                                 className={classes.element}
                                 component="span"
                                 color={state.imageLink===null?"secondary":"primary"}
-                                required
                             >
                                 <AddPhotoAlternateIcon />
                             </IconButton>
@@ -484,7 +514,7 @@ const CreateProperty = () => {
                         </label>
 
                        <label htmlFor="iconButton">
-                            {state.imageLink===null?'':state.imageLink.name}
+                            {state.imageLink}
                         </label>
 
                         {/* <Button

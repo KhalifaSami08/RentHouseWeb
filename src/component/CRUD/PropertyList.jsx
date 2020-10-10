@@ -57,7 +57,7 @@ const PropertyList = () => {
   }
 
   const deleteProperty = idProperty => {
-    
+    console.log(idProperty);
     setOpenDialog({ Delete:false});
     /* axios.delete("http://localhost:5000/api/property/"+idProperty)
       .then(res => {

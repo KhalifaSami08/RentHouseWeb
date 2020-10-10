@@ -55,7 +55,7 @@ const verifyPassword = () =>{
     if(values.password === AdminPsw){
     
         console.log("Authentification réiussie ! ");
-        return history.push('/Owner');
+        return history.push('/AdminProfile');
     }
     else{
         console.log(values.password);
