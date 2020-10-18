@@ -16,7 +16,6 @@ import {
     Delete as DeleteIcon,
     AddCircle as AddCircleIcon,
     Edit as EditIcon,
-    Pageview as PageViewIcon,
 } from '@material-ui/icons';
 
 
@@ -26,28 +25,42 @@ const ClientList = () => {
 
     const redirectCRUD = e => {
         console.log(e.currentTarget.id);
-        return history.push(history.location.pathname+'/'+e.currentTarget.id);
+        return history.push(history.location.pathname+'/Client/'+e.currentTarget.id);
     };
 
   const [listofClient,setListofClient] = React.useState([]); 
+  // const [isItemDeleted,setItemDeleted] = React.useState(false);
+
+
+  const getAllClients = async () => {
+    await axios.get("http://localhost:5000/api/client")
+    .then(res => setListofClient(res.data))
+    .then(console.log("Fetch Client Data Ok ! "))
+    .catch(err => console.log(err));
+  }
 
   React.useEffect(() =>{
-    
-    axios.get("http://localhost:5000/api/client")
-    .then(res => {
-        setListofClient(res.data);
 
-    })
-    .catch(error => {
-        if (!error.response) {
-            // network error
-            console.log('Error: Network Error');
-        } else {
-            console.log(error.response.data.message);
-        }
-    })
+    getAllClients();
         
-  },[]);
+  },[/*isItemDeleted*/]);
+
+  const deleteClient = idClient => {
+    console.log(idClient);
+
+    window.alert("Un Client ne peux pas être supprimé car il est peut être lié a des contrats ! ")
+
+   /* if (window.confirm("En êtes vous sûrs ? ")) {
+
+      axios.delete("http://localhost:5000/api/client/"+idClient)
+      .then(res => {
+        console.log(res);
+        alert("Client supprimé ! ");
+      })
+      .catch(err => console.log(err));
+      setItemDeleted(!isItemDeleted);
+    }*/
+  }
 
     return (
     <Grid container 
@@ -59,7 +72,7 @@ const ClientList = () => {
       <Grid item>
         
         <Button
-          id='CreateClient'
+          id='Create'
           size="large"
           color="primary"
           startIcon={<AddCircleIcon />}
@@ -98,29 +111,20 @@ const ClientList = () => {
 
                 <CardActions>
                   <Button 
-                    id={"Read/"+client.idClient}
-                    size="small" 
-                    color="primary"
-                    startIcon={<PageViewIcon />}
-                    // onClick={}
-                  >
-                    Details
-                  </Button>
-                  <Button 
                     id={"Update/"+client.idClient}
                     size="small" 
                     color="primary"  
                     startIcon={<EditIcon />}
-                    // onClick={}
+                    onClick={redirectCRUD}
                   >
                     Modifier
                   </Button>
                   <Button 
-                    id={"Delete/"+client.idClient}
+                    id="Delete"
                     size="small"
                     color="primary"
                     startIcon={<DeleteIcon />}
-                    // onClick={}
+                    onClick={() => deleteClient(client.idClient)}
                   >
                     Supprimer
                   </Button>

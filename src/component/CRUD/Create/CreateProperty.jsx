@@ -92,8 +92,6 @@ const CreateProperty = () => {
     React.useEffect(() => {
         if(idParam !== undefined){
             getProperty(idParam);
-            // console.log('Update : ');
-            // console.log(state);
             setUpdateStatus(true);
         }
         
@@ -204,19 +202,13 @@ const CreateProperty = () => {
 
     return (
         <form onSubmit={handleOnSubmit}>
+
             <Grid container 
-            className={classes.element}
-        >
-            <Grid item
-                xs={12} sm={6}
+                className={classes.element}
+                direction="column"
+                justify="center"
+                alignItems="center"
             >
-                <Grid container
-                    direction="row"
-                    justify="center"
-                    alignItems="center"
-                    spacing={2}
-                >
-                
                 <TextField 
                     id="description"
                     label="description"
@@ -237,6 +229,28 @@ const CreateProperty = () => {
                         ),
                     }}
                 />
+            </Grid>
+            <Grid container 
+                className={classes.element}
+                direction="row"
+                justify="center"
+                alignItems="center"
+            >
+
+                
+
+            <Grid item
+                xs={12} sm={6}
+            >
+
+                <Grid container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    spacing={2}
+                >
+                
+                
                 <TextField 
                     id="adress"
                     label="Adresse"

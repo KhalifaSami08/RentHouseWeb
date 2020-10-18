@@ -3,15 +3,19 @@ import {
   BrowserRouter as Router,
   Switch,
   Route, 
+  Redirect, 
 } from 'react-router-dom';
 
 import Navbar from './layout/Navbar';
 
 import Error from './component/Error';
-import Home from './component/Home';
-import CreateProperty from './component/CRUD/CreateProperty';
-import CreateClient from './component/CRUD/CreateClient';
-// import Update from './component/CRUD/Update';
+// import Home from './component/Home';
+
+import GenerateContract from './component/GenerateContract';
+import CreateProperty from './component/CRUD/Create/CreateProperty';
+import CreateContract from './component/CRUD/Create/CreateContract';
+import CreateClient from './component/CRUD/Create/CreateClient';
+
 
 import AdminProfile from './component/AdminProfile';
 
@@ -20,9 +24,9 @@ const App = () => {
     <Router>
       <Navbar />
       <Switch>
-        <Route exact path={"/"} component={Home}/>  
-        {/* <Route exact path={"/"} component={ownerRoutes}/>   */}
-        <Route path={"/AdminProfile"} component={ownerRoutes}/>
+        <Redirect exact from="/" to="/AdminProfile" />
+        {/* <Route exact path={"/"} component={Home}/>   */}
+        <Route path="/AdminProfile" component={ownerRoutes}/>
         
         <Route component={Error} />
       </Switch>
@@ -35,10 +39,16 @@ const ownerRoutes = ({match}) => (
     <Router>
       <Switch>
         <Route exact path={match.url + "/"} component={AdminProfile}/>
-        <Route exact path={match.url + "/CreateProperty"} component={CreateProperty}/>
-        <Route exact path={match.url + "/Update/:idParam"} component={CreateProperty}/>
+        <Route exact path={match.url + "/Property/Create"} component={CreateProperty}/>
+        <Route exact path={match.url + "/Property/Update/:idParam"} component={CreateProperty}/>
 
-        <Route exact path={match.url + "/CreateClient"} component={CreateClient}/>
+        <Route exact path={match.url + "/Client/Create"} component={CreateClient}/>
+        <Route exact path={match.url + "/Client/Update/:idParam"} component={CreateClient}/>
+
+        <Route exact path={match.url + "/Contract/Create/"} component={CreateContract}/>
+        <Route exact path={match.url + "/Contract/Update/:idParam"} component={CreateContract}/>
+
+        <Route exact path={match.url + "/Contract/GenerateContract/:idParam"} component={GenerateContract}/>
         <Route component={Error} />
       </Switch>
     </Router>

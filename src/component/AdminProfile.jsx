@@ -1,7 +1,7 @@
 import React from 'react';
-import PropertyList from './CRUD/PropertyList';
-import ClientList from './CRUD/ClientList';
-import ContractList from './CRUD/ContractList';
+import PropertyList from './CRUD/List/PropertyList';
+import ClientList from './CRUD/List/ClientList';
+import ContractList from './CRUD/List/ContractList';
 import { 
   Grid, 
   Box, 
@@ -31,8 +31,8 @@ function TabPanel(props) {
 }
 
 const AdminProfile = () => {
-
-  const [value, setValue] = React.useState(0);
+  let defautvaluestate = 2;
+  const [value, setValue] = React.useState(defautvaluestate);
   
   const handleChangeTab = (e, newValue) => {
     setValue(newValue);

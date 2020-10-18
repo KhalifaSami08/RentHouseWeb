@@ -71,7 +71,7 @@ const NavBar = () => {
           
           <IconButton className={classes.profile}>
             <Link to="/AdminProfile"> 
-                  <Badge badgeContent={2} max={5} color="secondary">
+                  <Badge badgeContent={0} max={5} color="secondary">
                       <AccountCircleRoundedIcon color="secondary" />
                   </Badge>
             </Link>

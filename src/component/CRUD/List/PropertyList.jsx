@@ -10,11 +10,7 @@ import {
     CardContent, 
     CardActions, 
     CardActionArea, 
-    Card, 
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
+    Card,
 } from '@material-ui/core';
 
 import {
@@ -28,61 +24,47 @@ import {
 
 const PropertyList = () => {
     
-    const history = useHistory();
-    const redirectCRUD = e => {
-        
-        return history.push(history.location.pathname+'/'+e.currentTarget.id);
-    };
+  const history = useHistory();
+  const redirectCRUD = e => {
+      
+      return history.push(history.location.pathname+'/Property/'+e.currentTarget.id);
+  };
 
-  const [listofProperty,setListofProperty] = React.useState([]); 
-  const [openDialog,setOpenDialog] = React.useState({
-    Read:false,
-    Update:false,
-    Delete:false
-  });
+  const [listofProperty,setListofProperty] = React.useState([]);
+  
+  //Va servir afin de raffraichir le useEffect donc la liste des propriétes
+  // const [isItemDeleted,setItemDeleted] = React.useState(false);
 
-  const handleClickOpen = e => {
-    let eID = e.currentTarget.id;
-    console.log(eID);
-    setOpenDialog({...openDialog, [eID]:true });
-    console.log('open : ');
-    console.log(openDialog);
-  }
-
-  const handleClose = e => {
-    let eID = e.currentTarget.id;
-    setOpenDialog({...openDialog, [eID]:false });
-    console.log('close : ');
-    console.log(openDialog);
+  const getAllProperties = async () => {
+    await axios.get("http://localhost:5000/api/property")
+    .then(res => setListofProperty(res.data))
+    .then(console.log("Fetch Data Property Ok ! "))
+    .catch(err => console.log(err));
   }
 
   const deleteProperty = idProperty => {
     console.log(idProperty);
-    setOpenDialog({ Delete:false});
-    /* axios.delete("http://localhost:5000/api/property/"+idProperty)
+    window.alert("Un Client ne peux pas être supprimé car il est peut être lié a des contrats ! ");
+
+    /*if (window.confirm(
+        "ATTENTION ! SUPPRIMER UNE PROPRIETE SUPPRIMERA EGALEMENT LE CONTRAT EN COURS, CONFIRMEZ :"
+    )) {
+
+      axios.delete("http://localhost:5000/api/property/"+idProperty)
       .then(res => {
         console.log(res)
         alert("Propriété supprimée ! ");
       })
-      .catch(err => console.log(err)); */
-    getAllProperties();
-    // setListofProperty(listofProperty);
-  }
-
-  const getAllProperties = async () => {
-     await axios.get("http://localhost:5000/api/property")
-     .then(res => setListofProperty(res.data))
-     .catch(err => console.log(err));
-     console.log("Fetch Data Ok ! ");
+      .catch(err => console.log(err));
+      setItemDeleted(!isItemDeleted);
+    }*/
   }
 
   React.useEffect(() =>{ 
 
     getAllProperties();
-
-  },[]);
-  
-  
+    
+  },[/*isItemDeleted*/]);
 
     return (
     <Grid container 
@@ -94,7 +76,7 @@ const PropertyList = () => {
       <Grid item>
         
         <Button
-          id='CreateProperty'
+          id='Create'
           size="large"
           color="primary"
           startIcon={<AddCircleIcon />}
@@ -138,15 +120,6 @@ const PropertyList = () => {
                 </CardActionArea>
 
                 <CardActions>
-                  {/* <Button 
-                    id="Read"
-                    size="small" 
-                    color="primary"
-                    startIcon={<PageViewIcon />}
-                    onClick= {handleClickOpen}
-                  >
-                    Details
-                  </Button> */}
                     
                   <Button 
                     id={"Update/"+id}
@@ -162,43 +135,12 @@ const PropertyList = () => {
                     size="small"
                     color="primary"
                     startIcon={<DeleteIcon />}
-                    onClick={handleClickOpen}
+                    onClick={() => deleteProperty(id)}
                   >
                     Supprimer
                   </Button>
                 </CardActions>
               </Card>
-
-              <Dialog
-                open={openDialog.Delete}
-                onClose={() => setOpenDialog({Delete:false })}
-              >
-                <DialogTitle>
-                  {id}
-                </DialogTitle>
-              
-                <DialogContent>
-                  
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    id="Delete"
-                    onClick={handleClose}
-                    color="secondary"
-                    variant="contained"
-                  >
-                    ANNULER
-                  </Button>
-                  <Button
-                    id="Delete"
-                    onClick={() => deleteProperty(id)}
-                    color="primary"
-                    variant="contained"
-                  >
-                    SUPPRIMER
-                  </Button>
-                </DialogActions>
-              </Dialog>
 
             </Grid>
             
