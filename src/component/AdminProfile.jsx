@@ -9,6 +9,10 @@ import {
   Tab, 
   AppBar, 
 } from '@material-ui/core';
+import {useDispatch} from "react-redux";
+import {getAllPropertiesAction} from "../store/action/PropertyAction";
+import {getAllClientsAction} from "../store/action/ClientAction";
+import {getAllContractsAction} from "../store/action/ContractAction";
 
 
 function TabPanel(props) {
@@ -31,8 +35,18 @@ function TabPanel(props) {
 }
 
 const AdminProfile = () => {
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        dispatch(getAllPropertiesAction());
+        dispatch(getAllClientsAction());
+        dispatch(getAllContractsAction());
+        console.log("FETCH DATAS ADMINPROFIL OK");
+    },[dispatch]);
+
   let defautvaluestate = 2;
   const [value, setValue] = React.useState(defautvaluestate);
+
   
   const handleChangeTab = (e, newValue) => {
     setValue(newValue);

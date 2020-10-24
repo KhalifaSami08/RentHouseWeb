@@ -1,9 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import { useParams, useHistory } from "react-router-dom";
-// import MuiAlert from '@material-ui/lab/Alert';
 import {
-    TextField,
     Select,
     MenuItem,
     Grid,
@@ -13,10 +10,8 @@ import {
     Typography,
     InputAdornment,
     IconButton,
-    Button,
     FormControlLabel,
     Checkbox,
-    // Snackbar,
 } from '@material-ui/core';
 
 import { 
@@ -37,11 +32,15 @@ import {
     GridOn as GridOnIcon,
     Description as DescriptionIcon,
 } from '@material-ui/icons';
+import ResetSubmit from "./persoLayout/ResetSubmit";
+import MyTextField from "./persoLayout/MyTextField";
+import {useDispatch, useSelector} from "react-redux";
+import {addPropertyAction, updatePropertyAction} from "../../../store/action/PropertyAction";
 
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-        element:{
+        Grid:{
             margin: theme.spacing(1.5),
         },
         inputFile:{
@@ -56,10 +55,13 @@ const CreateProperty = () => {
     const classes = useStyles();
     const { idParam } = useParams();
     const history = useHistory();
+    const dispatch = useDispatch();
+
+    const myProp = useSelector(state => state.reducerPropertyKey.currentProp);
 
     const stateDefaultValues = {
 
-        adress: "Rue Okay",
+        adress: "Rue Okay 32",
         type: "house",
         floor: 0,
         nbRoom: 1,
@@ -71,86 +73,52 @@ const CreateProperty = () => {
         rentCost:764,
         fixedChargesCost:234,
         imageLink:null,
-        isCurrentlyRented:false,
+        nbLocator:0,
     }
-
+    
     const [state,setState] = React.useState(stateDefaultValues);
     const [isUpdateStatus, setUpdateStatus] = React.useState(false);
-    
+
     const [roomArea,setRoomArea] = React.useState([]);
 
-    const getProperty = React.useCallback(async (idParam) => {
-        await axios.get("http://localhost:5000/api/property/"+idParam)
-        .then(res => setState(res.data))
-        .catch(err => console.log(err));
-        console.log("Property get ok ! ");
-    },[])
-
-    // console.log("ID : "+idParam);
-
-    
     React.useEffect(() => {
+
         if(idParam !== undefined){
-            getProperty(idParam);
             setUpdateStatus(true);
+            console.log(myProp);
+            setState(myProp)
         }
-        
-    },[getProperty, idParam]);
-      
+    },[idParam, myProp]);
 
-    /* const [snackbarValid,setsnackbarValid] = React.useState({
 
-        valid:false,
-        reset:false,
-        imageUpload:false,
-        error:false,
-    });
- */
     const handleChange = e => {
         const eId = e.currentTarget.id;
-        // console.log(eId+" -> "+e.target.value);
         setState({...state, [eId]:e.target.value});
-        // console.log(state);
     }
 
     const handleChangeRoomArea = e => {
         const eId = e.currentTarget.id;
-        // console.log(eId+" -> "+e.target.value);
         setRoomArea({...roomArea, [eId]:e.target.value});
-        // console.log(roomArea);
     }
 
     const fileSelectedHandler = e =>{
         let selFile = e.target.files[0].name;
-        // console.log(selFile);
         setState({...state , imageLink:selFile })
     }
 
-    /* function Alert(props) {
-        return <MuiAlert elevation={6} variant="filled" {...props} />;
-    } */
-
-
     const handleOnSubmit = async e => {
-        // console.log(state);
         e.preventDefault();
 
         if(isUpdateStatus){
-            await axios.put("http://localhost:5000/api/property/"+idParam , state)
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
+            await dispatch(updatePropertyAction(state))
         }
         else{
-            await axios.post("http://localhost:5000/api/property/" , state)
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
+            await dispatch(addPropertyAction(state))
         }
         return history.push('/AdminProfile');
     }
 
-    const clearBtn = e => {
-        setState(stateDefaultValues);
-    }
+    const clearBtn = e => setState(stateDefaultValues);
 
     const final = [];
 
@@ -158,30 +126,13 @@ const CreateProperty = () => {
         final.push(
             <Grid container 
                 key={i}
-                className={classes.element}
+                className={classes.Grid}
                 direction="row"
                 justify="center"
                 alignItems="center"
             >
-                <TextField 
-                    id={'idRoom'+i}
-                    label="Nom de la piéce"
-                    className={classes.element}
-                    color="secondary"
-                    variant="outlined"
-                    value={roomArea.idRoom}
-                    onChange={handleChangeRoomArea}
-                    
-                />
-                <TextField 
-                    id={'labelRoom'+i}
-                    label="Aire de la piéce"
-                    className={classes.element}
-                    type="number"
-                    color="secondary"
-                    variant="outlined"
-                    value={roomArea.labelRoom}
-                    onChange={handleChangeRoomArea}
+                <MyTextField id={'idRoom'+i} label={"Nom de la piéce"} value={roomArea.idRoom} onChange={handleChangeRoomArea}/>
+                <MyTextField id={'labelRoom'+i} label="Aire de la piéce" type="number" value={roomArea.labelRoom} onChange={handleChangeRoomArea}
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -204,23 +155,12 @@ const CreateProperty = () => {
         <form onSubmit={handleOnSubmit}>
 
             <Grid container 
-                className={classes.element}
+                className={classes.Grid}
                 direction="column"
                 justify="center"
                 alignItems="center"
             >
-                <TextField 
-                    id="description"
-                    label="description"
-                    placeholder="description"
-                    className={classes.element}
-                    color="primary"
-                    value={state.description}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                    multiline
-                    rowsMax={3}
+                <MyTextField id="description" label="description" value={state.description} onChange={handleChange} required multiline rowsMax={3}
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -231,13 +171,11 @@ const CreateProperty = () => {
                 />
             </Grid>
             <Grid container 
-                className={classes.element}
+                className={classes.Grid}
                 direction="row"
                 justify="center"
                 alignItems="center"
             >
-
-                
 
             <Grid item
                 xs={12} sm={6}
@@ -249,18 +187,8 @@ const CreateProperty = () => {
                     alignItems="center"
                     spacing={2}
                 >
-                
-                
-                <TextField 
-                    id="adress"
-                    label="Adresse"
-                    placeholder="Adresse"
-                    className={classes.element}
-                    color="primary"
-                    value={state.adress}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
+
+                <MyTextField id="adress" label="Adresse" value={state.adress} onChange={handleChange} required
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -272,11 +200,11 @@ const CreateProperty = () => {
 
                 <Select
                     id="type"
-                    className={classes.element}
+                    className={classes.Grid}
                     value={state.type}
                     onChange={handleChange}
                     color="primary"
-                    variant="outlined"
+                    variant="filled"
                     startAdornment={<HomeWorkIcon />}
                 >
                     
@@ -285,17 +213,7 @@ const CreateProperty = () => {
                     <MenuItem id="type" value="room">Chambre</MenuItem>
                 </Select>  
 
-                <TextField 
-                    id="floor"
-                    label="Etage n°"
-                    placeholder={state.type==='house'?'(Facultatif)':'(Obligatoire)'}
-                    className={classes.element}
-                    type="number"
-                    color="primary"
-                    value={state.floor}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required={state.type==='house'?false:true}
+                <MyTextField id="floor" label={state.type==='house'?'Etage n° (Facultatif)':'Etage n° (Obligatoire)'} type="number" value={state.floor} onChange={handleChange} required={state.type !== 'house'}
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -305,17 +223,7 @@ const CreateProperty = () => {
                     }}
                 />
 
-                <TextField 
-                    id="totalArea"
-                    placeholder="Superficie totale"
-                    label="Superficie totale"
-                    className={classes.element}
-                    type="number"
-                    color="primary"
-                    value={state.totalArea}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
+                <MyTextField id={"totalArea"} label={"Superficie totale"} type={"number"} value={state.totalArea} onChange={handleChange} required
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -330,18 +238,7 @@ const CreateProperty = () => {
                     }}
                 />
 
-                <TextField 
-                    id="nbRoom"
-                    placeholder="Nombre de Pièces"
-                    label="Nombre de Pièces"
-                    className={classes.element}
-                    type="number"
-                    color="primary"
-                    value={state.nbRoom}
-                    onChange={handleChange}
-                    variant="outlined"
-                    
-                    required
+                <MyTextField id={"nbRoom"} label={"Nombre de Pièces"} type={"number"} value={state.nbRoom} onChange={handleChange} required
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -362,7 +259,7 @@ const CreateProperty = () => {
                 />
                 
                 <Accordion
-                    className={classes.element}
+                    className={classes.Grid}
                     defaultExpanded
                 >
                     <AccordionSummary
@@ -395,17 +292,7 @@ const CreateProperty = () => {
                     spacing={2}
                 >
                     
-                    <TextField 
-                        id="diningRoomArea"
-                        placeholder="Aire de la salle a manger"
-                        label="Aire de la salle a manger"
-                        className={classes.element}
-                        type="number"
-                        color="primary"
-                        value={state.diningRoomArea}
-                        onChange={handleChange}
-                        variant="outlined"
-                        required
+                    <MyTextField id="diningRoomArea" label="Aire de la salle a manger" type="number" value={state.diningRoomArea} onChange={handleChange} required
                         InputProps={{
                             startAdornment: (
                             <InputAdornment position="start">
@@ -420,17 +307,7 @@ const CreateProperty = () => {
                         }}
                     />
                     
-                    <TextField 
-                        id="kitchenArea"
-                        placeholder="Aire de la cuisine"
-                        label="Aire de la cuisine"
-                        className={classes.element}
-                        type="number"
-                        color="primary"
-                        value={state.kitchenArea}
-                        onChange={handleChange}
-                        variant="outlined"
-                        required
+                    <MyTextField id="kitchenArea" label="Aire de la cuisine" type="number" value={state.kitchenArea} onChange={handleChange} required
                         InputProps={{
                             startAdornment: (
                             <InputAdornment position="start">
@@ -445,17 +322,7 @@ const CreateProperty = () => {
                         }}
                     />
                     
-                    <TextField 
-                        id="rentCost"
-                        placeholder="Rente mensuelle (en €)"
-                        label="Rente mensuelle (en €)"
-                        className={classes.element}
-                        type="number"
-                        color="primary"
-                        value={state.rentCost}
-                        onChange={handleChange}
-                        variant="outlined"
-                        required
+                    <MyTextField id="rentCost" label="Rente mensuelle (en €)" type="number" value={state.rentCost} onChange={handleChange} required
                         InputProps={{
                             startAdornment: (
                             <InputAdornment position="start">
@@ -469,17 +336,7 @@ const CreateProperty = () => {
                             ),
                         }}
                     />
-                    <TextField 
-                        id="fixedChargesCost"
-                        placeholder="Charges mensuelles"
-                        label="Charges mensuelles"
-                        className={classes.element}
-                        type="number"
-                        color="primary"
-                        value={state.fixedChargesCost}
-                        onChange={handleChange}
-                        variant="outlined"
-                        required
+                    <MyTextField id="fixedChargesCost" label="Charges mensuelles" type="number" value={state.fixedChargesCost} onChange={handleChange} required
                         InputProps={{
                             startAdornment: (
                             <InputAdornment position="start">
@@ -496,18 +353,18 @@ const CreateProperty = () => {
 
                     <FormControlLabel
                      disabled 
-                     control={<Checkbox checked={state.isCurrentlyRented} name="checkedE" />} 
+                     control={<Checkbox checked={state.nbLocator > 0} name="checkedE" />}
                      label="Logement actuellement loué ? " 
                      labelPlacement="top"
                     />
-                    
+
+                    <MyTextField id={"nbLocator"} label={"Nombre de Locataires"} disabled value={state.nbLocator} type="number" />
                    
                     <Grid container item
                         direction="row"
                         justify="center"
                         alignItems="center"
                     >
-                        
                         <input 
                             accept="image/*" 
                             className={classes.inputFile} 
@@ -518,7 +375,7 @@ const CreateProperty = () => {
                         <label htmlFor="icon-button-file">
                             <IconButton 
                                 id="iconButton"
-                                className={classes.element}
+                                className={classes.Grid}
                                 component="span"
                                 color={state.imageLink===null?"secondary":"primary"}
                             >
@@ -531,58 +388,14 @@ const CreateProperty = () => {
                             {state.imageLink}
                         </label>
 
-                        {/* <Button
-                            className={classes.element}
-                            // onClick={fileUploadHandler}
-                            variant="contained"
-                            color={state.imageLink===null?"secondary":"primary"}
-                        > 
-                            Upload Image 
-                        </Button> */}
-
 
                     </Grid>
-                                
                 </Grid>
             </Grid>
 
-            <Grid container item
-                direction="row"
-                justify="flex-end"
-                alignItems="flex-end"
-            >
-                <Button
-                    color="secondary"
-                    variant="contained"
-                    className={classes.element}
-                    type="reset"
-                    onClick={clearBtn}
-                >
-                    Reset
-                </Button>
+            <ResetSubmit clearBtn={clearBtn} />
 
-                <Button
-                    color="primary"
-                    variant="contained"
-                    type="submit"
-                    className={classes.element}
-                    // onClick={handleOnSubmit}
-                >
-                    Valider
-                </Button>
             </Grid>
-            
-            {/* <Snackbar open={true} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success">
-                This is a success message!
-                </Alert>
-            </Snackbar> */}
-            
-            {/* <Alert severity="error">Certaines données sont incomplétes / Fausses ! </Alert>
-            <Alert severity="warning">Vous venez de reset le formulaire</Alert>
-            <Alert severity="info">L'Image a bien été chargée</Alert>
-            <Alert severity="success">Formulaire validé ! </Alert> */}
-        </Grid>
         </form>
     )
 }

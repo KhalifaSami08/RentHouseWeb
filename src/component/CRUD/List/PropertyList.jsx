@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios';
 
 import { useHistory } from 'react-router-dom';
 import {
@@ -17,54 +16,32 @@ import {
     Delete as DeleteIcon,
     AddCircle as AddCircleIcon,
     Edit as EditIcon,
-    // Pageview as PageViewIcon,
 } from '@material-ui/icons';
+import {useDispatch, useSelector} from "react-redux";
+import {getPropertyByIDAction} from "../../../store/action/PropertyAction";
 
 
 
 const PropertyList = () => {
-    
-  const history = useHistory();
-  const redirectCRUD = e => {
-      
-      return history.push(history.location.pathname+'/Property/'+e.currentTarget.id);
-  };
+    const myListofProperties = useSelector(prop => prop.reducerPropertyKey.allProperties);
+    const dispatch = useDispatch();
+    // const pathToImages = "../../../assets/PropertyImages/";
 
-  const [listofProperty,setListofProperty] = React.useState([]);
-  
-  //Va servir afin de raffraichir le useEffect donc la liste des propriétes
-  // const [isItemDeleted,setItemDeleted] = React.useState(false);
+    const history = useHistory();
+    const redirectCreate = e => history.push(history.location.pathname+'/Property/Create/');
 
-  const getAllProperties = async () => {
-    await axios.get("http://localhost:5000/api/property")
-    .then(res => setListofProperty(res.data))
-    .then(console.log("Fetch Data Property Ok ! "))
-    .catch(err => console.log(err));
-  }
+    const redirectUpdate = async e =>{
+        const eID = e.currentTarget.id;
+        console.log(eID);
+        await dispatch( getPropertyByIDAction(eID) ).then(() => history.push(history.location.pathname+'/Property/Update/'+eID) );
+    }
 
-  const deleteProperty = idProperty => {
-    console.log(idProperty);
-    window.alert("Un Client ne peux pas être supprimé car il est peut être lié a des contrats ! ");
 
-    /*if (window.confirm(
-        "ATTENTION ! SUPPRIMER UNE PROPRIETE SUPPRIMERA EGALEMENT LE CONTRAT EN COURS, CONFIRMEZ :"
-    )) {
+    const deleteProperty = idProperty => {
+      console.log(idProperty);
+      window.alert("Une propriété ne peux pas être supprimé car elle est peut être lié a plusieurs contrats ! ");
+    }
 
-      axios.delete("http://localhost:5000/api/property/"+idProperty)
-      .then(res => {
-        console.log(res)
-        alert("Propriété supprimée ! ");
-      })
-      .catch(err => console.log(err));
-      setItemDeleted(!isItemDeleted);
-    }*/
-  }
-
-  React.useEffect(() =>{ 
-
-    getAllProperties();
-    
-  },[/*isItemDeleted*/]);
 
     return (
     <Grid container 
@@ -80,7 +57,7 @@ const PropertyList = () => {
           size="large"
           color="primary"
           startIcon={<AddCircleIcon />}
-          onClick={redirectCRUD}
+          onClick={redirectCreate}
         >  
           <Typography>
             AJOUTER UN BIEN A LOUER
@@ -93,7 +70,7 @@ const PropertyList = () => {
         alignItems="center"
         spacing={2}
       >
-        {listofProperty.map( prop => {
+        {myListofProperties.map( prop => {
           const id = prop.idProperty;
           return(
             <Grid item
@@ -101,13 +78,13 @@ const PropertyList = () => {
               xs={12} sm={6} md={4} lg={3}
             >
 
-              <Card>
+              <Card key={id}>
                 <CardActionArea>
                   <CardMedia
                     component="img"
                     alt={prop.adress}
                     height="140"
-                    image={prop.imageLink}
+                    image={"https://i.ytimg.com/vi/cA2cYo86Kws/maxresdefault.jpg"}
                   />
                   <CardContent>
                   <Typography gutterBottom variant="h5" component="h2">
@@ -122,16 +99,16 @@ const PropertyList = () => {
                 <CardActions>
                     
                   <Button 
-                    id={"Update/"+id}
+                    id={id}
                     size="small" 
                     color="primary"  
                     startIcon={<EditIcon />}
-                    onClick={redirectCRUD}
+                    onClick={redirectUpdate}
                   >
                     Modifier
                   </Button>
-                  <Button 
-                    id="Delete"
+                  <Button
+                    id={"Delete"+id}
                     size="small"
                     color="primary"
                     startIcon={<DeleteIcon />}

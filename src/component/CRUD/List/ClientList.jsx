@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 
 import { useHistory } from 'react-router-dom';
 import {
@@ -17,52 +16,44 @@ import {
     AddCircle as AddCircleIcon,
     Edit as EditIcon,
 } from '@material-ui/icons';
-
+import {useDispatch, useSelector} from "react-redux";
+import {deleteClientAction, getClientByIDAction} from "../../../store/action/ClientAction";
 
 
 const ClientList = () => {
     const history = useHistory();
+    const myListofClients = useSelector(cli => cli.reducerClientKey.allClient);
+    const dispatch = useDispatch();
 
-    const redirectCRUD = e => {
-        console.log(e.currentTarget.id);
-        return history.push(history.location.pathname+'/Client/'+e.currentTarget.id);
-    };
+    const redirectCreate = e => history.push(history.location.pathname+'/Client/Create/');
 
-  const [listofClient,setListofClient] = React.useState([]); 
-  // const [isItemDeleted,setItemDeleted] = React.useState(false);
+    const redirectUpdate = async e =>{
+        const eID = e.currentTarget.id;
+        console.log(eID);
+        await dispatch( getClientByIDAction(eID) ).then(() => history.push(history.location.pathname+'/Client/Update/'+eID) );
+    }
 
+    const deleteClient = idClient => {
+        console.log(idClient);
 
-  const getAllClients = async () => {
-    await axios.get("http://localhost:5000/api/client")
-    .then(res => setListofClient(res.data))
-    .then(console.log("Fetch Client Data Ok ! "))
-    .catch(err => console.log(err));
-  }
+        const cliCurrID = myListofClients.findIndex(
+            cli => cli.idClient === idClient
+        )
+        const cliCurr = myListofClients[cliCurrID];
 
-  React.useEffect(() =>{
+        if(cliCurr.haveAlreadyRentedHouse){
+            alert("Cette maison a des contrats en cours, supprimez les pour éviter un crash du serveur");
+        }
+        else{
+            if (window.confirm(
+                "En êtes vous sûrs ? Supprimer un Client supprimera tout les contrats relatifs a ce client !"
+            ))
+            { dispatch(deleteClientAction(idClient)) }
+        }
 
-    getAllClients();
-        
-  },[/*isItemDeleted*/]);
+    }
 
-  const deleteClient = idClient => {
-    console.log(idClient);
-
-    window.alert("Un Client ne peux pas être supprimé car il est peut être lié a des contrats ! ")
-
-   /* if (window.confirm("En êtes vous sûrs ? ")) {
-
-      axios.delete("http://localhost:5000/api/client/"+idClient)
-      .then(res => {
-        console.log(res);
-        alert("Client supprimé ! ");
-      })
-      .catch(err => console.log(err));
-      setItemDeleted(!isItemDeleted);
-    }*/
-  }
-
-    return (
+  return (
     <Grid container 
       direction="column"
       justify="center"
@@ -76,7 +67,7 @@ const ClientList = () => {
           size="large"
           color="primary"
           startIcon={<AddCircleIcon />}
-          onClick={redirectCRUD}
+          onClick={redirectCreate}
         >  
           <Typography>
             AJOUTER UN NOUVEAU CLIENT
@@ -90,14 +81,14 @@ const ClientList = () => {
         spacing={2}
       >
 
-        {listofClient.map( client => {
+        {myListofClients.map( client => {
+          const cliId = client.idClient;
           return(
-
             <Grid item
-              key={client.idClient}
+              key={cliId}
               xs={12} sm={6} md={4} lg={3}
             >
-              <Card>
+              <Card key={cliId}>
                 <CardActionArea>
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
@@ -111,20 +102,20 @@ const ClientList = () => {
 
                 <CardActions>
                   <Button 
-                    id={"Update/"+client.idClient}
+                    id={cliId}
                     size="small" 
                     color="primary"  
                     startIcon={<EditIcon />}
-                    onClick={redirectCRUD}
+                    onClick={redirectUpdate}
                   >
                     Modifier
                   </Button>
                   <Button 
-                    id="Delete"
+                    id={"Delete"+cliId}
                     size="small"
                     color="primary"
                     startIcon={<DeleteIcon />}
-                    onClick={() => deleteClient(client.idClient)}
+                    onClick={() => deleteClient(cliId)}
                   >
                     Supprimer
                   </Button>

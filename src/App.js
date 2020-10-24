@@ -16,10 +16,26 @@ import CreateProperty from './component/CRUD/Create/CreateProperty';
 import CreateContract from './component/CRUD/Create/CreateContract';
 import CreateClient from './component/CRUD/Create/CreateClient';
 
-
 import AdminProfile from './component/AdminProfile';
+/*
+import {useDispatch} from "react-redux";
+import {getAllPropertiesAction} from "./store/action/PropertyAction";
+import {getAllClientsAction} from "./store/action/ClientAction";
+import {getAllContractsAction} from "./store/action/ContractAction";
+
+*/
 
 const App = () => {
+
+  /*const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(getAllPropertiesAction());
+    dispatch(getAllClientsAction());
+    dispatch(getAllContractsAction());
+    console.log("FETCH DATAS HOME OK");
+  },[dispatch]);*/
+
   return (
     <Router>
       <Navbar />
@@ -45,7 +61,7 @@ const ownerRoutes = ({match}) => (
         <Route exact path={match.url + "/Client/Create"} component={CreateClient}/>
         <Route exact path={match.url + "/Client/Update/:idParam"} component={CreateClient}/>
 
-        <Route exact path={match.url + "/Contract/Create/"} component={CreateContract}/>
+        <Route exact path={match.url + "/Contract/Create"} component={CreateContract}/>
         <Route exact path={match.url + "/Contract/Update/:idParam"} component={CreateContract}/>
 
         <Route exact path={match.url + "/Contract/GenerateContract/:idParam"} component={GenerateContract}/>

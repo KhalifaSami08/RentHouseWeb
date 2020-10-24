@@ -4,23 +4,51 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { teal } from '@material-ui/core/colors';
-import { red } from '@material-ui/core/colors';
+import {
+    // teal,
+    red,
+    // deepOrange
+} from '@material-ui/core/colors';
+
+import {Provider} from "react-redux";
+import {createStore, combineReducers, applyMiddleware} from "redux";
+import thunk from "redux-thunk";
+
+import {PropertyReducer} from "./store/reducer/PropertyReducer";
+import {ContractReducer} from "./store/reducer/ContractReducer";
+import {ClientReducer} from "./store/reducer/ClientReducer";
+
 
 const theme = createMuiTheme({
   palette: {
     type: 'dark',
-    primary: teal,
-    secondary: {main: teal[100]},
+    /*primary: teal,
+    secondary: {main: deepOrange[A100]},*/
+    primary: {
+      main: '#00695c',
+    },
+    secondary: {
+      // main: '#ff7043',
+      main: '#8e24aa',
+    },
     error:red,
   },
-  
 });
+
+const rootReducer = combineReducers({
+    reducerPropertyKey:PropertyReducer,
+    reducerClientKey:ClientReducer,
+    reducerContractKey:ContractReducer
+})
+
+const store = createStore(rootReducer, applyMiddleware(thunk))
 
 ReactDOM.render(
   // <React.StrictMode>
-    <ThemeProvider theme={theme} >
-      <App />
+    <ThemeProvider theme={theme}>
+        <Provider store={store}>
+            <App />
+        </Provider>
     </ThemeProvider>
   //  </React.StrictMode>
   ,document.getElementById('root')

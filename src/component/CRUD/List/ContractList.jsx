@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 
 import { useHistory } from 'react-router-dom';
 import {
@@ -16,50 +15,39 @@ import {
     AddCircle as AddCircleIcon,
     Edit as EditIcon,
     NoteAdd as NoteAddIcon,
-    // Description as DecriptionIcon,
 } from '@material-ui/icons';
+import {useDispatch, useSelector} from "react-redux";
+import {deleteContractAction, getContractByIdAction} from "../../../store/action/ContractAction";
 
 
 const ContractList = () => {
 
-  const history = useHistory();
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const myContractList = useSelector(contr => contr.reducerContractKey.allContracts)
+    const myClientList = useSelector(cli => cli.reducerClientKey.allClient);
+    const myListofProps = useSelector(prop => prop.reducerPropertyKey.allProperties);
 
-    const redirectCRUD = e => {
-        console.log(e.currentTarget.id);
-        return history.push(history.location.pathname+'/Contract/'+e.currentTarget.id);
-    };
+    const redirectCRUD = e => history.push(history.location.pathname+'/Contract/'+e.currentTarget.id);
+    const redirectGenerate = async e =>{
+        const eID = e.currentTarget.id;
+        console.log(eID);
+        await dispatch( getContractByIdAction(eID)).then(() => history.push(history.location.pathname+'/Contract/GenerateContract/'+eID) );
 
-  const [listofContracts,setListofContract] = React.useState([]); 
-  const [isItemDeleted,setItemDeleted] = React.useState(false); 
-  
-  const GetAllContracts = async () => {
+    }
 
-    axios.get("http://localhost:5000/api/contract")
-    .then(res => setListofContract(res.data))
-    .catch(err => console.log(err))
-  }
-
-  React.useEffect(() =>{
-
-    GetAllContracts();
-        
-  },[isItemDeleted]);
+    const redirectUpdate = async e =>{
+        const eID = e.currentTarget.id;
+        console.log(eID);
+        await dispatch( getContractByIdAction(eID)).then(() => history.push(history.location.pathname+'/Contract/Update/'+eID) );
+    }
 
   const deleteContract = idContract => {
-    console.log(idContract);
 
     if (window.confirm("En êtes vous sûrs ? ")) {
-
-      axios.delete("http://localhost:5000/api/contract/"+idContract)
-      .then(res => {
-        console.log(res);
-        alert("Contrat supprimé ! ");
-      })
-      .catch(err => console.log(err));
-      setItemDeleted(!isItemDeleted);
+        dispatch(deleteContractAction(idContract))
     }
   }
-
     return (
     <Grid container 
       direction="column"
@@ -95,10 +83,17 @@ const ContractList = () => {
         spacing={2}
       >
 
-        {listofContracts.map( contract => {
-            console.log(contract);
-          return(
+        {myContractList.map( contract => {
+            const cliCurrID = myClientList.findIndex(
+                cli => cli.idClient === contract.clientId
+            )
+            const cliCurr = myClientList[cliCurrID];
 
+            const propCurrId = myListofProps.findIndex(
+                cli => cli.idProperty === contract.propertyId
+            )
+            const propCurr = myListofProps[propCurrId];
+          return(
             <Grid item
               key={contract.idContract}
               xs={12} sm={6} md={4} lg={3}
@@ -109,18 +104,19 @@ const ContractList = () => {
                       {"CLIENT : "}
                   </Typography>
                   <Typography variant="h6" color="textSecondary" component="h2">
-                      {contract.client.name+" "+contract.client.surname}
+                      {cliCurr.name+" "+cliCurr.surname}
+                      {" Pour l'Habitation -> "+propCurr.idProperty}
                   </Typography>
                   </CardContent>
 
                 <CardActions>
                   
                   <Button 
-                    id={"Update/"+contract.idContract}
+                    id={contract.idContract}
                     size="small" 
                     color="primary"  
                     startIcon={<EditIcon />}
-                    onClick={redirectCRUD}
+                    onClick={redirectUpdate}
                   >
                     Modifier
                   </Button>
@@ -134,12 +130,12 @@ const ContractList = () => {
                     Supprimer
                   </Button>
                   <Button
-                    id={"GenerateContract/"+contract.idContract}
-                    color="primary"
+                    id={contract.idContract}
+                    color="secondary"
                     variant="contained"
                     size="small"
                     startIcon={<NoteAddIcon />}
-                    onClick={redirectCRUD}
+                    onClick={redirectGenerate}
                   >
                     DOCUMENTS
                   </Button>

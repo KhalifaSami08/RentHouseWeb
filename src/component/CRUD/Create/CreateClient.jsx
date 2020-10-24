@@ -1,26 +1,17 @@
 import React from 'react';
-import axios from 'axios';
+
 import { useParams, useHistory } from "react-router-dom";
 import {
     Grid,
     InputAdornment,
-    TextField,
     Select,
     MenuItem,
     InputLabel,
     FormControl,
     FormControlLabel,
     Checkbox,
-    Button,
 } from '@material-ui/core';
 
-/* import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker,
-} from '@material-ui/pickers';
-
-import DateFnsUtils from '@date-io/date-fns';
-import 'date-fns'; */
 import { 
     createStyles, 
     makeStyles, 
@@ -33,20 +24,17 @@ import {
     Email as EmailIcon,
     Phone as PhoneIcon,
 } from '@material-ui/icons';
+import ResetSubmit from "./persoLayout/ResetSubmit";
+import MyTextField from "./persoLayout/MyTextField";
+import {useDispatch, useSelector} from "react-redux";
+import {addClientAction, updateClientAction} from "../../../store/action/ClientAction";
+import MyDatePicker from "./persoLayout/MyDatePicker";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
         grid:{
             margin: theme.spacing(2),
-        },
-        elem:{
-            margin: theme.spacing(0.5),
-        },
-        elemSpe: {
-            width:'40%',
-            margin: theme.spacing(0.5),
         }
-        
     }),
 );
 
@@ -55,15 +43,17 @@ const CreateClient = () => {
     const classes = useStyles();
     const { idParam } = useParams();
     const history = useHistory();
+    const dispatch = useDispatch();
+    const myClient = useSelector(state => state.reducerClientKey.currentClient);
 
     const initialStateClient = {
         
         civility:"Mr",
-        gender:'', //Defaut
+        gender:'M', //Defaut
         name:"Rachid",
         surname:"Castafiore",
-        adress:"Rue Blabla",
-        postalCode:"1080",
+        adress:"Rue Blabla 23",
+        postalCode:"1090",
         city:"Bruxelles",
         country:"be",
         email:"okok@gmail.com",
@@ -73,18 +63,15 @@ const CreateClient = () => {
         dateOfBirth:"1981-10-21",
         age:0, //Defaut
         placeOfBirth:"Bruxelles", 
-        nationalRegister:"810304-254.87", 
-
+        nationalRegister:"810304-254.87",
+        haveAlreadyRentedHouse:false,
     };
 
     const [client , setClient] = React.useState(initialStateClient);
     const [isUpdateStatus, setUpdateStatus] = React.useState(false);
 
-    const variant = "filled";
-
     const handleChange = e => {
         const eId = e.currentTarget.id;
-        console.log(eId+" -> "+e.target.value);
         setClient({...client, [eId]:e.target.value});
     }
 
@@ -93,18 +80,13 @@ const CreateClient = () => {
     }
 
     const handleOnSubmit = async e => {
-        // console.log(state);
         e.preventDefault();
 
         if(isUpdateStatus){
-            await axios.put("http://localhost:5000/api/client/"+idParam , client)
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
+            await dispatch( updateClientAction(client) )
         }
         else{
-            await axios.post("http://localhost:5000/api/client/" , client)
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
+            await dispatch( addClientAction(client) )
         }
         return history.push('/AdminProfile');
     };
@@ -116,45 +98,39 @@ const CreateClient = () => {
         let dis = document.getElementById("isClient").style;
         client.isClient ? dis.display="block" : dis.display="none";
 
-
     },[client.isClient])
 
-    console.log("render");
     React.useEffect(() => {
-
-        const fetchData = async (idParam) => {
-            await axios.get("http://localhost:5000/api/client/"+idParam)
-                .then(res => {
-                    console.log(res.data);
-                    setClient(res.data);
-                    const realDate = new Date(res.data.dateOfBirth).toISOString().split('T')[0].toString();
-                    setClient(c=>({...c, dateOfBirth: realDate }))
-                    console.log(client.dateOfBirth)
-                })
-                .catch(err => console.log(err));
-
-        }
-
+        
         if(idParam !== undefined){
-            fetchData(idParam);
             setUpdateStatus(true);
+            console.log(myClient);
+            setClient(myClient);
         }
 
-    },[idParam]);
+    },[idParam, myClient]);
 
     //Recalculer l'age en fonction de la datedeNaissance
     React.useEffect(() => {
-
         const dateClient = new Date(client.dateOfBirth);
         const getUTCDate = new Date(Date.now() - dateClient.getTime())
         const currentAge = getUTCDate.getUTCFullYear() - 1970;
-
         setClient(c=>({...c, age:currentAge}));
     },[client.dateOfBirth]);
 
-    const clearBtn = e => {
-        setClient(initialStateClient);
-    }
+    //Changer le genre au changement de civilité
+    React.useEffect(() => {
+        let genderChange;
+        if(client.civility==='Mr'){
+            genderChange = 'M';
+        }
+        else{
+            genderChange = 'F';
+        }
+        setClient(c => ({...c, gender: genderChange}) );
+    },[client.civility])
+
+    const clearBtn = e => setClient(initialStateClient);
 
     return (
         <form onSubmit={handleOnSubmit}>  
@@ -175,15 +151,7 @@ const CreateClient = () => {
                   alignItems="center"
                 >
                  
-                  <TextField 
-                    className={classes.elem}
-                    id="name"
-                    label="Nom"
-                    color="primary"
-                    value={client.name}
-                    onChange={handleChange}
-                    variant={variant}
-                    required
+                  <MyTextField id="name" label="Nom" value={client.name} onChange={handleChange} required
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -193,15 +161,7 @@ const CreateClient = () => {
                     }}
                   />
 
-                  <TextField 
-                    className={classes.elem}
-                    id="surname"
-                    label="Prenom"
-                    color="primary"
-                    value={client.surname}
-                    onChange={handleChange}
-                    variant={variant}
-                    required
+                  <MyTextField id="surname" label="Prenom" value={client.surname} onChange={handleChange} required
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -221,18 +181,18 @@ const CreateClient = () => {
                     <FormControl>
                         <InputLabel htmlFor="CivilityLabel">Civilité</InputLabel>
                         <Select
-                        className={classes.elem}
-                        id="civility"
-                        value={client.civility}
-                        onChange={handleChange}
-                        color="primary"
-                        variant={variant}
-                        autoWidth
-                        required
-                        startAdornment={<WcIcon />}
-                        inputProps={{
-                            id: 'CivilityLabel',
-                        }}
+                            className={classes.elem}
+                            id="civility"
+                            value={client.civility}
+                            onChange={handleChange}
+                            color="primary"
+                            variant={"filled"}
+                            autoWidth
+                            required
+                            startAdornment={<WcIcon />}
+                            inputProps={{
+                                id: 'CivilityLabel',
+                            }}
                         >
                         
                         <MenuItem id="civility" value="Mr">Monsieur</MenuItem>
@@ -240,29 +200,12 @@ const CreateClient = () => {
                         <MenuItem id="civility" value="Ms">Mademoiselle</MenuItem>
                         </Select>  
                     </FormControl>
-                    <TextField
-                      className={classes.elem}
-                      style={{'width':'20%'}}
-                      id="gender"
-                      label="Genre"
-                      required
-                      disabled
-                    //   size="small"
-                      variant={variant}
-                      value={client.civility==='Mr'?'M':'F'}
-                    />  
+
+                      <MyTextField style={{'width':'20%'}} id="gender" label="Genre" disabled value={client.gender}/>
+
                   </Grid>
                   
-                  <TextField 
-                    className={classes.elem}
-                    id="email"
-                    label="Email"
-                    type="email"
-                    color="primary"
-                    value={client.email}
-                    onChange={handleChange}
-                    variant={variant}
-                    required
+                  <MyTextField id="email" label="Email" type="email" value={client.email} onChange={handleChange} required
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -271,16 +214,7 @@ const CreateClient = () => {
                         ),
                     }}
                   />
-                  <TextField 
-                    className={classes.elem}
-                    id="phoneNumber"
-                    label="Phone"
-                    type="tel"
-                    color="primary"
-                    value={client.phoneNumber}
-                    onChange={handleChange}
-                    variant={variant}
-                    required
+                  <MyTextField id="phoneNumber" label="Phone" type="tel" value={client.phoneNumber} onChange={handleChange} required
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -300,15 +234,7 @@ const CreateClient = () => {
                   justify="center"
                   alignItems="center" 
                 >
-                    <TextField 
-                      className={classes.elem}
-                      id="adress"
-                      label="Adresse"
-                      color="primary"
-                      value={client.adress}
-                      onChange={handleChange}
-                      variant={variant}
-                      required
+                    <MyTextField id="adress" label="Adresse" value={client.adress} onChange={handleChange} required
                       InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -317,16 +243,7 @@ const CreateClient = () => {
                         ),
                       }}
                     />
-                    <TextField 
-                        className={classes.elem}
-                        id="postalCode"
-                        label="Code Postal"
-                        color="primary"
-                        type="number"
-                        value={client.postalCode}
-                        onChange={handleChange}
-                        variant={variant}
-                        required
+                    <MyTextField id="postalCode" label="Code Postal" type="number" value={client.postalCode} onChange={handleChange} required
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
@@ -342,15 +259,7 @@ const CreateClient = () => {
                     justify="center"
                     alignItems="center"
                   >
-                    <TextField 
-                        className={classes.elemSpe}
-                        id="city"
-                        label="Ville"
-                        color="primary"
-                        value={client.city}
-                        onChange={handleChange}
-                        variant={variant}
-                        required
+                    <MyTextField id="city" label="Ville" value={client.city} onChange={handleChange} required
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
@@ -367,7 +276,7 @@ const CreateClient = () => {
                         value={client.country}
                         onChange={handleChange}
                         color="primary"
-                        variant={variant}
+                        variant={"filled"}
                         autoWidth
                         inputProps={{
                             id: 'Pays',
@@ -382,93 +291,38 @@ const CreateClient = () => {
                         </Select> 
                     </FormControl>
                   </Grid>
-                  
-                  <FormControlLabel 
-                     control={
-                        <Checkbox 
-                            checked={client.isClient}
-                            // id="isClient"
-                            onChange={handleisClient}
-                        />} 
-                     label="Êtes vous un Client ? "
-                     labelPlacement="top"
+                    <Grid
+                        className={classes.grid}
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                    >
+                    <FormControlLabel
+                        disabled
+                        control={<Checkbox checked={client.haveAlreadyRentedHouse} name="checkedE" />}
+                        label="Loue déja une habitation ? "
+                        labelPlacement="top"
                     />
-
+                    <FormControlLabel
+                         control={ <Checkbox checked={client.isClient} onChange={handleisClient}/> }
+                         label="Êtes vous un Client ? "
+                         labelPlacement="top"
+                    />
+                    </Grid>
                     <div id="isClient" style={{display:'block'}}>
                         Donc Remplissez les champs ici présent :
 
-                        <TextField
-                            className={classes.elemSpe}
-                            id="dateOfBirth"
-                            label="Date de Naissance"
-                            type="date"
-                            color="primary"
-                            defaultValue={client.dateOfBirth}
-                            onChange={handleChange}
-                            variant={variant}
-                            required={client.isClient}
-                            
-                        />
-                        <TextField 
-                            className={classes.elemSpe}
-                            id="age"
-                            label="Votre age est : "
-                            color="primary"
-                            type="number"
-                            disabled
-                            value={client.age}
-                            variant={variant}
-                            required={client.isClient}
-                        />
-                        <TextField 
-                            className={classes.elem}
-                            id="placeOfBirth"
-                            label="Lieu de Naissance"
-                            color="primary"
-                            value={client.placeOfBirth}
-                            onChange={handleChange}
-                            variant={variant}
-                            required={client.isClient}
-                        />
-                        <TextField 
-                            className={classes.elem}
-                            id="nationalRegister"
-                            label="N° Registre National"
-                            color="primary"
-                            value={client.nationalRegister}
-                            onChange={handleChange}
-                            variant={variant}
-                            required={client.isClient}
-                        />
+                        <MyDatePicker id="dateOfBirth" label="Date de Naissance" value={client.dateOfBirth} onChange={e => setClient(c =>({...c,dateOfBirth:e}))} required={client.isClient}/>
+                        <MyTextField id="age" label="Votre age est : " type="number" disabled value={client.age} required={client.isClient} />
+                        <MyTextField id="placeOfBirth" label="Lieu de Naissance" value={client.placeOfBirth} onChange={handleChange} required={client.isClient}/>
+                        <MyTextField id="nationalRegister" label="N° Registre National" value={client.nationalRegister} onChange={handleChange} required={client.isClient}/>
 
                     </div>
 
                 </Grid>
 
-                <Grid container item
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="flex-end"
-                >
-                <Button
-                    color="secondary"
-                    variant="contained"
-                    className={classes.elem}
-                    type="reset"
-                    onClick={clearBtn}
-                >
-                    Reset
-                </Button>
-
-                <Button
-                    color="primary"
-                    variant="contained"
-                    type="submit"
-                    className={classes.elem}
-                >
-                    Valider
-                </Button>
-            </Grid>
+                <ResetSubmit clearBtn={clearBtn} />
 
             </Grid>
         </form>

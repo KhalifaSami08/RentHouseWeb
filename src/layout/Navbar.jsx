@@ -14,7 +14,6 @@ import {
   makeStyles 
 } from '@material-ui/core/styles';
 import {
-  // Search as SearchIcon,
   Home as HomeIcon,
   AccountCircleRounded as AccountCircleRoundedIcon,
 } from '@material-ui/icons';
@@ -35,10 +34,11 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.down('xs')]: {
         display: 'none',
       },
-
+      color:'white',
     },
     profile: {
       flexGrow: 1,
+        color:'white',
     },
   }),
 );
@@ -55,14 +55,13 @@ const NavBar = () => {
             direction="column"
           >
             <Link to="/"> 
-              <IconButton color = "secondary">
+              <IconButton>
                   <HomeIcon />               
               </IconButton>
           
               <Typography 
                 className={classes.title} 
                 variant="h6" 
-                color="secondary"
                 noWrap>
                 RENTHOUSE PROJECT S.K.
               </Typography>
@@ -71,8 +70,8 @@ const NavBar = () => {
           
           <IconButton className={classes.profile}>
             <Link to="/AdminProfile"> 
-                  <Badge badgeContent={0} max={5} color="secondary">
-                      <AccountCircleRoundedIcon color="secondary" />
+                  <Badge badgeContent={0} max={5} >
+                      <AccountCircleRoundedIcon className={classes.profile} />
                   </Badge>
             </Link>
           </IconButton>
