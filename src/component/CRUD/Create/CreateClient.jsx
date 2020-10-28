@@ -60,10 +60,10 @@ const CreateClient = () => {
         phoneNumber:"0492164040",
 
         isClient:false, //Garant ou locataire
-        dateOfBirth:"1981-10-21",
+        dateOfBirth:"0001-01-01",
         age:0, //Defaut
-        placeOfBirth:"Bruxelles", 
-        nationalRegister:"810304-254.87",
+        placeOfBirth:null,
+        nationalRegister:null,
         haveAlreadyRentedHouse:false,
     };
 
