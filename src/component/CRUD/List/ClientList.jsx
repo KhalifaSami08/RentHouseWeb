@@ -18,11 +18,14 @@ import {
 } from '@material-ui/icons';
 import {useDispatch, useSelector} from "react-redux";
 import {deleteClientAction, getClientByIDAction} from "../../../store/action/ClientAction";
+import {deleteContractAction} from "../../../store/action/ContractAction";
 
 
 const ClientList = () => {
     const history = useHistory();
     const myListofClients = useSelector(cli => cli.reducerClientKey.allClient);
+
+    const allContr = useSelector(contr => contr.reducerContractKey?.allContracts);
     const dispatch = useDispatch();
 
     const redirectCreate = e => history.push(history.location.pathname+'/Client/Create/');
@@ -42,13 +45,17 @@ const ClientList = () => {
         const cliCurr = myListofClients[cliCurrID];
 
         if(cliCurr.haveAlreadyRentedHouse){
-            alert("Cette maison a des contrats en cours, supprimez les pour éviter un crash du serveur");
+            alert("Cette maison a des contrats en cours, êtes vous surs de vouloir continuer ? ");
+            const idContractToDelete = allContr.find(c => c.clientId === idClient);
+            console.log(idContractToDelete);
+            dispatch(deleteContractAction(idContractToDelete.idContract))
         }
-        else{
-            if (window.confirm(
-                "En êtes vous sûrs ? Supprimer un Client supprimera tout les contrats relatifs a ce client !"
-            ))
-            { dispatch(deleteClientAction(idClient)) }
+
+        if (window.confirm(
+            "Confirmez votre choix ! "
+        ))
+        {
+            dispatch(deleteClientAction(idClient))
         }
 
     }

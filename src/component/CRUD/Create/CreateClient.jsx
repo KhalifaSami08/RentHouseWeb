@@ -62,8 +62,8 @@ const CreateClient = () => {
         isClient:false, //Garant ou locataire
         dateOfBirth:"0001-01-01",
         age:0, //Defaut
-        placeOfBirth:null,
-        nationalRegister:null,
+        placeOfBirth:"",
+        nationalRegister:"",
         haveAlreadyRentedHouse:false,
     };
 
@@ -97,6 +97,15 @@ const CreateClient = () => {
     React.useEffect(()=> {
         let dis = document.getElementById("isClient").style;
         client.isClient ? dis.display="block" : dis.display="none";
+
+        if(!client.isClient){
+            setClient(c=>({...c,
+                dateOfBirth:"0001-01-01",
+                age:0, //Defaut
+                placeOfBirth:"",
+                nationalRegister:"",
+            }))
+        }
 
     },[client.isClient])
 

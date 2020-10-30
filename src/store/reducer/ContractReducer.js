@@ -35,7 +35,6 @@ export const ContractReducer = (state=initialState, action) => {
 
         case DELETE_CONTRACT:
             return {...state, allContracts: state.allContracts.filter(contr => contr.idContract !== action.idContractRemoved)}
-
         default:
             return state;
     }

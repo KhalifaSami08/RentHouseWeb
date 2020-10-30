@@ -88,25 +88,37 @@ const ContractList = () => {
                 cli => cli.idClient === contract.clientId
             )
             const cliCurr = myClientList[cliCurrID];
-
             const propCurrId = myListofProps.findIndex(
                 cli => cli.idProperty === contract.propertyId
             )
             const propCurr = myListofProps[propCurrId];
-          return(
-            <Grid item
-              key={contract.idContract}
-              xs={12} sm={6} md={4} lg={3}
+
+            // console.log('cliCurr : '+cliCurr.idClient);
+            // console.log('propCurr : '+propCurr.idProperty);
+
+            return(
+            <Grid
+                key={contract.idContract}
+                item
+                xs={12} sm={6} md={4} lg={3}
             >
               <Card>
                   <CardContent>
-                  <Typography color={"primary"} variant="body2" component="p">
-                      {"CLIENT : "}
-                  </Typography>
-                  <Typography variant="h6" color="textSecondary" component="h2">
-                      {cliCurr.name+" "+cliCurr.surname}
-                      {" Pour l'Habitation -> "+propCurr.idProperty}
-                  </Typography>
+                      <Typography color={"primary"} variant="body2" component="p">
+                          {"ID Contrat : "+contract.idContract}
+                      </Typography>
+                      <Typography color={"primary"} variant="body2" component="p">
+                          {"CLIENT : "}
+                      </Typography>
+                      <Typography variant="h6" color="textSecondary" component="h2">
+                          {cliCurr?.name+" "+cliCurr?.surname}
+                      </Typography>
+                      <Typography color={"primary"} variant="body2" component="p">
+                          {" Pour l'Habitation  "}
+                      </Typography>
+                      <Typography variant="h6" color="textSecondary" component="h2">
+                          {propCurr?.idProperty}
+                      </Typography>
                   </CardContent>
 
                 <CardActions>
