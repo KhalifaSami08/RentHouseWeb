@@ -96,9 +96,7 @@ const CreateContract = () => {
             prop => prop.idProperty === contract.propertyId
         )
         const propCurr = listofProperties[propCurrID];
-        console.log(propCurr);
         const garantie = propCurr.rentCost * 2;
-        console.log(garantie);
         setContracts(c => ({...c, garanteeAmount: garantie}))
     },[contract.propertyId, listofProperties]);
 

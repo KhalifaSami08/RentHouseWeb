@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 
 import Navbar from './layout/Navbar';
-
 import Error from './component/Error';
 // import Home from './component/Home';
 
@@ -17,24 +16,9 @@ import CreateContract from './component/CRUD/Create/CreateContract';
 import CreateClient from './component/CRUD/Create/CreateClient';
 
 import AdminProfile from './component/AdminProfile';
-/*
-import {useDispatch} from "react-redux";
-import {getAllPropertiesAction} from "./store/action/PropertyAction";
-import {getAllClientsAction} from "./store/action/ClientAction";
-import {getAllContractsAction} from "./store/action/ContractAction";
 
-*/
 
 const App = () => {
-
-  /*const dispatch = useDispatch();
-
-  React.useEffect(() => {
-    dispatch(getAllPropertiesAction());
-    dispatch(getAllClientsAction());
-    dispatch(getAllContractsAction());
-    console.log("FETCH DATAS HOME OK");
-  },[dispatch]);*/
 
   return (
     <Router>

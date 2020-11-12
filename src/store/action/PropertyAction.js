@@ -1,11 +1,17 @@
-import {addPropertyAPI, getAllPropertiesAPI, getPropertyByIdAPI, updatePropertyAPI} from "../../api/ApiProperty";
+import {
+    addPropertyAPI,
+    deletePropertyAPI,
+    getAllPropertiesAPI,
+    getPropertyByIdAPI,
+    updatePropertyAPI
+} from "../../api/ApiProperty";
 
 export const GET_ALL_PROPERTIES='GET_ALL_PROPERTIES';
 export const GET_PROPERTY_BY_ID='GET_PROPERTY_BY_ID';
 
 export const ADD_PROPERTY='ADD_PROPERTY';
 export const UPDATE_PROPERTY='UPDATE_PROPERTY';
-//Supprime pas de propriété
+export const DELETE_PROPERTY='DELETE_PROPERTY';
 
 export const getAllPropertiesAction = () => {
     return async dispatch => {
@@ -33,4 +39,9 @@ export const updatePropertyAction = property => {
     }
 }
 
-//PAS DE DELETE
+export const deletePropertyAction = idproperty => {
+    return async dispatch => {
+        await deletePropertyAPI(idproperty).then();
+        dispatch({type: DELETE_PROPERTY, deletedPropKey: idproperty})
+    }
+}

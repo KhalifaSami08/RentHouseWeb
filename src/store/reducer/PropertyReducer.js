@@ -1,4 +1,10 @@
-import {ADD_PROPERTY, GET_ALL_PROPERTIES, GET_PROPERTY_BY_ID, UPDATE_PROPERTY} from "../action/PropertyAction";
+import {
+    ADD_PROPERTY,
+    DELETE_PROPERTY,
+    GET_ALL_PROPERTIES,
+    GET_PROPERTY_BY_ID,
+    UPDATE_PROPERTY
+} from "../action/PropertyAction";
 
 const initialState={
     allProperties:[],
@@ -25,7 +31,8 @@ export const PropertyReducer = (state=initialState, action) => {
             updatedAllProperties[propIndex] = action.updatedPropKey;
 
             return {...state, allProperties: updatedAllProperties};
-
+        case DELETE_PROPERTY:
+            return {...state, allProperties: state.allProperties.filter(prop => prop.idProperty !== action.deletedPropKey)}
         default:
             // console.log("RETURN DEFAULT PROPERTY")
             return state;

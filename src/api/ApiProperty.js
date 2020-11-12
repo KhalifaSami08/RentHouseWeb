@@ -23,10 +23,13 @@ export const addPropertyAPI = async property => {
 }
 
 export const updatePropertyAPI = async property => {
-
     await axios.put("http://localhost:5000/api/property/"+property.idProperty , property)
         .then(res => console.log(res))
         .catch(err => console.log(err))
 }
 
-//Je ne récupére pas le Delete car celà peut poser un probleme au niveau des clés étrangéres(Table contrat)
+export const deletePropertyAPI = async idprop => {
+    await axios.delete("http://localhost:5000/api/property/"+idprop)
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+}

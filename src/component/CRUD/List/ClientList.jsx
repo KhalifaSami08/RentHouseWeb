@@ -45,19 +45,24 @@ const ClientList = () => {
         const cliCurr = myListofClients[cliCurrID];
 
         if(cliCurr.haveAlreadyRentedHouse){
-            alert("Cette maison a des contrats en cours, êtes vous surs de vouloir continuer ? ");
-            const idContractToDelete = allContr.find(c => c.clientId === idClient);
-            console.log(idContractToDelete);
-            dispatch(deleteContractAction(idContractToDelete.idContract))
+            if(window.confirm(
+                "Ce client a des contrats en cours, êtes vous surs de vouloir continuer ? "
+            ))
+            {
+                const idContractToDelete = allContr.find(c => c.clientId === idClient);
+                console.log(idContractToDelete);
+                dispatch(deleteContractAction(idContractToDelete.idContract))
+                dispatch(deleteClientAction(idClient))
+            }
         }
-
-        if (window.confirm(
-            "Confirmez votre choix ! "
-        ))
-        {
-            dispatch(deleteClientAction(idClient))
+        else{
+            if(window.confirm(
+                "Confirmez votre choix ! "
+            ))
+            {
+                dispatch(deleteClientAction(idClient))
+            }
         }
-
     }
 
   return (
@@ -95,7 +100,7 @@ const ClientList = () => {
               key={cliId}
               xs={12} sm={6} md={4} lg={3}
             >
-              <Card key={cliId}>
+              <Card>
                 <CardActionArea>
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
@@ -129,7 +134,6 @@ const ClientList = () => {
                 </CardActions>
               </Card>
             </Grid>
-            
           )})}
       </Grid>
     </Grid>
