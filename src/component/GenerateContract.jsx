@@ -1,26 +1,26 @@
-import React from 'react'
-import axios from 'axios';
-import {useSelector} from "react-redux";
+import React from 'react';
 import SelfButton from "./CRUD/Create/persoLayout/SelfButton";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import {useParams} from "react-router-dom";
 
 const GenerateContract = () => {
-    const myCurrentContract = useSelector(contr => contr.reducerContractKey.currentContract);
-    // console.log(myCurrentContract)
+    // const myCurrentContract = useSelector(contr => contr.reducerContractKey.currentContract);
+    const { idParam } = useParams();
+    console.log(idParam);
 
-    const [toDownload,setToDownload] = React.useState({
+    const initState = {
         BAIL:false,
         GARANT:false,
         LIEU_ENTRE:false,
         LIEU_SORTIE:false,
         RESILIATION_ANTICIPE:false,
         CONGE_BAIL:false
-    });
+    }
+    const [toDownload,setToDownload] = React.useState(initState);
 
     const handleChange = e =>{
         const eId = e.currentTarget.id;
-        // console.log(toDownload);
         setToDownload(c => ({...c, [eId] : !toDownload[eId] }))
     }
 
@@ -30,16 +30,18 @@ const GenerateContract = () => {
 
         for (const val in toDownload) {
             if(toDownload[val]){
-                download(myCurrentContract.idContract, val)
-                    .then(() => console.log("Tout les documents ont été téléchargés ! "));
+                download(idParam, val).then(r => console.log(r));
             }
         }
+
+        console.log("Tout les documents ont été téléchargés ! ");
+        setToDownload(initState);
     }
 
     const download = async (idContr,idType) =>{
-        await axios.get("http://localhost:5000/api/contract/doc/"+idContr+"/"+idType)
-            .then(res => console.log(res.data));
+        window.open(`http://localhost:5000/api/contract/doc/${idContr}/${idType}`).blur();
     }
+
 
     return (
         <Grid

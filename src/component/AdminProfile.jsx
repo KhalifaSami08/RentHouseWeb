@@ -44,7 +44,7 @@ const AdminProfile = () => {
         console.log("FETCH DATAS ADMINPROFIL OK");
     },[dispatch]);
 
-  let defautvaluestate = 0;
+  let defautvaluestate = 2;
   const [value, setValue] = React.useState(defautvaluestate);
 
   
