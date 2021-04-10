@@ -10,12 +10,12 @@ const GenerateContract = () => {
     console.log(idParam);
 
     const initState = {
-        BAIL:false,
-        GARANT:false,
-        LIEU_ENTRE:false,
-        LIEU_SORTIE:false,
-        RESILIATION_ANTICIPE:false,
-        CONGE_BAIL:false
+        Lease:false,
+        Guarantor:false,
+        EntryState:false,
+        ExitInventory:false,
+        EarlyTermination:false,
+        LeaseCancellation:false
     }
     const [toDownload,setToDownload] = React.useState(initState);
 
@@ -41,32 +41,51 @@ const GenerateContract = () => {
     const download = async (idContr,idType) =>{
         window.open(`http://localhost:5000/api/contract/doc/${idContr}/${idType}`).blur();
     }
-
-
+    const Count = () => {
+        let cpt = 0;
+        for (const val in toDownload) {
+            if(toDownload[val]){
+                cpt++;
+            }
+        }
+        return cpt;
+    }
     return (
-        <Grid
-            container
-        >
+        <Grid container>
             <Grid
+                // xs={6}
                 item
                 container
-                direction={"column"}
+                direction={"row"}
+                justify={"center"}
+                alignItems={"center"}
+                style={{margin:15}}
+            >
+                <SelfButton id={"Lease"} text={"Lease Contract"} click={handleChange} color={toDownload.Lease?"secondary":"primary"} />
+                <SelfButton id={"Guarantor"} text={"Guarantor"} click={handleChange} color={toDownload.Guarantor?"secondary":"primary"} />
+                <SelfButton id={"EntryState"} text={"Entry State"} click={handleChange} color={toDownload.EntryState?"secondary":"primary"} />
+                <SelfButton id={"ExitInventory"} text={"Exit Inventory"} click={handleChange} color={toDownload.ExitInventory?"secondary":"primary"} />
+                <SelfButton id={"EarlyTermination"} text={"Early Termination"} click={handleChange} color={toDownload.EarlyTermination?"secondary":"primary"} />
+                <SelfButton id={"LeaseCancellation"} text={"Lease Cancellation"} click={handleChange} color={toDownload.LeaseCancellation?"secondary":"primary"} />
+                <Count /> / 6
+
+            </Grid>
+            {/*<Grid
+                item
+                container
+                direction={"row"}
                 justify={"center"}
                 alignItems={"center"}
             >
-                <SelfButton id={"BAIL"} text={"Contrat de Bail"} click={handleChange} color={toDownload.BAIL?"secondary":"primary"} />
-                <SelfButton id={"GARANT"} text={"Caution du garant"} click={handleChange} color={toDownload.GARANT?"secondary":"primary"} />
-                <SelfButton id={"LIEU_ENTRE"} text={"Etat des lieux d'entrée"} click={handleChange} color={toDownload.LIEU_ENTRE?"secondary":"primary"} />
-                <SelfButton id={"LIEU_SORTIE"} text={"Etat des lieux de sortie"} click={handleChange} color={toDownload.LIEU_SORTIE?"secondary":"primary"} />
-                <SelfButton id={"RESILIATION_ANTICIPE"} text={"Résiliation anticipée"} click={handleChange} color={toDownload.RESILIATION_ANTICIPE?"secondary":"primary"} />
-                <SelfButton id={"CONGE_BAIL"} text={"Congé de bail"} click={handleChange} color={toDownload.CONGE_BAIL?"secondary":"primary"} />
-            </Grid>
+                <Count /> / 6
+            </Grid>*/}
             <Grid
+                // xs={6}
                 item
                 container
-                direction="row"
-                justify="flex-end"
-                alignItems="flex-end"
+                direction={"row"}
+                justify={"center"}
+                alignItems={"center"}
             >
                 <Button
                     color={"secondary"}

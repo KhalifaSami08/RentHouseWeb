@@ -57,16 +57,16 @@ const CreateContract = () => {
         clientId:1,
         
         property:{
-            rentCost:""
+            rentCost:0
         },
-        client:{},
+        client:{ },
 
         beginContract:new Date("2020-05-28"), //date actuelle par défaut, géré dans le back
         endContract:new Date("2030-05-30"),
-        duration:"", // par défaut = diff entre date de sortie et date d'entrée
+        duration:3, // par défaut = diff entre date de sortie et date d'entrée
         baseIndex:4,
         guaranteeAmount:0, // par défaut = 2X Loyer
-        signatureDate:new Date("2020-10-20"), //date actuelle par défaut, géré dans le back
+        signatureDate:new Date("2020-10-22"), //date actuelle par défaut, géré dans le back
 
         beginIndexWater:0,
         beginIndexGaz:0,
@@ -77,7 +77,7 @@ const CreateContract = () => {
         endIndexElectricity:0,
 
         isGuaranteePaid:false,
-        guaranteePaidDate:new Date("2020-10-20"),
+        guaranteePaidDate:new Date("2020-10-21"),
         isFirstMountPaid:true,
         entryDate:new Date("2020-10-20"), //date actuelle par défaut
         releaseDate:new Date("2030-10-20"),
