@@ -22,7 +22,7 @@ import {deletePropertyAction, getPropertyByIDAction} from "../../../store/action
 
 
 const PropertyList = () => {
-    const myListofProperties = useSelector(prop => prop.reducerPropertyKey.allProperties);
+    const myPropertiesList = useSelector(prop => prop.reducerPropertyKey.allProperties);
     const dispatch = useDispatch();
 
     const history = useHistory();
@@ -36,10 +36,10 @@ const PropertyList = () => {
 
     const deleteProperty = idProperty => {
         console.log(idProperty);
-        const propCurrID = myListofProperties.findIndex(
+        const propCurrID = myPropertiesList.findIndex(
             prop => prop.idProperty === idProperty
         );
-        const propCurr = myListofProperties[propCurrID];
+        const propCurr = myPropertiesList[propCurrID];
         if(propCurr.nbLocator>0){
             window.alert("Une propriété ne peux pas être supprimé car elle est liée a plusieurs contrats ! ");
         }
@@ -79,7 +79,7 @@ const PropertyList = () => {
                   alignItems="center"
                   spacing={2}
             >
-                {myListofProperties.map( prop => {
+                {myPropertiesList.map(prop => {
                     const id = prop.idProperty;
                     return(
                         <Grid item
@@ -91,7 +91,7 @@ const PropertyList = () => {
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
-                                        alt={prop.adress}
+                                        alt={prop.address}
                                         height="140"
                                         image={"https://i.ytimg.com/vi/cA2cYo86Kws/maxresdefault.jpg"}
                                     />

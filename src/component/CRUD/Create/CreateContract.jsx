@@ -47,20 +47,25 @@ const CreateContract = () => {
     const dispatch = useDispatch();
     const myCurrentContract = useSelector(contr => contr.reducerContractKey.currentContract);
 
-    const listofProperties = useSelector(prop => prop.reducerPropertyKey.allProperties);
-    const listofClient = useSelector(cli => cli.reducerClientKey.allClient);
+    const listOfProperties = useSelector(contr => contr.reducerPropertyKey.allProperties);
+    const listOfClients = useSelector(contr => contr.reducerClientKey.allClient);
+    
 
-
-    const contractDefautValues = {
+    const contractDefaultValues = {
 
         propertyId:3,
-        clientId:4,
+        clientId:1,
+        
+        property:{
+            rentCost:""
+        },
+        client:{},
 
         beginContract:new Date("2020-05-28"), //date actuelle par défaut, géré dans le back
         endContract:new Date("2030-05-30"),
         duration:"", // par défaut = diff entre date de sortie et date d'entrée
         baseIndex:4,
-        garanteeAmount:0, // par défaut = 2X Loyer
+        guaranteeAmount:0, // par défaut = 2X Loyer
         signatureDate:new Date("2020-10-20"), //date actuelle par défaut, géré dans le back
 
         beginIndexWater:0,
@@ -72,15 +77,14 @@ const CreateContract = () => {
         endIndexElectricity:0,
 
         isGuaranteePaid:false,
-        garanteePaidDate:new Date("2020-10-20"),
+        guaranteePaidDate:new Date("2020-10-20"),
         isFirstMountPaid:true,
         entryDate:new Date("2020-10-20"), //date actuelle par défaut
         releaseDate:new Date("2030-10-20"),
     }
 
     const [isUpdateStatus, setUpdateStatus] = React.useState(false);
-    const [contract,setContracts] = React.useState(contractDefautValues);
-
+    const [contract,setContracts] = React.useState(contractDefaultValues);
 
     React.useEffect(() => {
         
@@ -92,20 +96,17 @@ const CreateContract = () => {
 
 
     React.useEffect(() => {
-        const propCurrID = listofProperties.findIndex(
-            prop => prop.idProperty === contract.propertyId
-        )
-        const propCurr = listofProperties[propCurrID];
-        const garantie = propCurr.rentCost * 2;
-        setContracts(c => ({...c, garanteeAmount: garantie}))
-    },[contract.propertyId, listofProperties]);
+        const index = listOfProperties.findIndex(p => p.idProperty === contract.propertyId);
+        const newProp = listOfProperties[index];
+        setContracts(c => ({...c, property: newProp, guaranteeAmount: newProp?.rentCost *2}))
+    },[contract.propertyId, listOfProperties]);
 
     React.useEffect(() => {
         let beginCont = new Date(contract.beginContract);
         let endCont = new Date(contract.endContract);
         let finalDuration =( endCont.getMonth() - beginCont.getMonth() ) + ( endCont.getFullYear() - beginCont.getFullYear() ) * 12;
-        setContracts(c => ({...c, duration: finalDuration}) )
-    },[contract.beginContract,contract.endContract]);
+        setContracts(c => ({...c, duration: finalDuration }))
+    },[contract.beginContract, contract.endContract]);
 
     const handleOnSubmit = async e => {
         e.preventDefault();
@@ -128,7 +129,7 @@ const CreateContract = () => {
 
     const handleBoolean = e => setContracts({...contract,[e.target.name]: e.target.checked});
 
-    const clearBtn = e => setContracts(contractDefautValues);
+    const clearBtn = e => setContracts(contractDefaultValues);
     const ListsOfPropsAndClients = () => {
         return(
             <Grid className={classes.grid} item>
@@ -145,7 +146,7 @@ const CreateContract = () => {
                         variant={"filled"}
                         startAdornment={<HomeWorkIcon />}
                     >
-                        {listofProperties.map(
+                        {listOfProperties.map(
                             property => {
                                 let propID = property.idProperty;
                                 return (
@@ -169,7 +170,7 @@ const CreateContract = () => {
                         variant={"filled"}
                         startAdornment={<AccountCircleRoundedIcon />}
                     >
-                        {listofClient.map(
+                        {listOfClients.map(
                             client => {
                                 let cliID = client.idClient;
                                 let fullname = client.name+" "+client.surname;
@@ -204,14 +205,14 @@ const CreateContract = () => {
                     {isUpdateStatus?"SI VOUS VOULEZ MODIFIER LE CLIENT OU LA PROPRIETE, FAITES UN AUTRE CONTRAT":<ListsOfPropsAndClients />}
 
                     <Grid className={classes.grid} item>
-                        <MyDatePicker id={"beginContract"} label={"Début du contrat"} value={contract.beginContract} onChange={e => setContracts(c =>({...c,beginContract:e}))} />
-                        <MyDatePicker id={"endContract"} label={"Fin du contrat"} value={contract.endContract} onChange={e => setContracts(c =>({...c,endContract:e}))}/>
+                        <MyDatePicker id={"beginContract"} label={"Début du contrat"} value={contract.beginContract} onChange={e => setContracts(c =>({...c, beginContract:e}))} />
+                        <MyDatePicker id={"endContract"} label={"Fin du contrat"} value={contract.endContract} onChange={e => setContracts(c =>({...c, endContract:e}))}/>
                         <MyTextField id={"duration"} label={"Durée en mois"} disabled value={contract.duration} type={"number"}/>
                     </Grid>
                     <Grid className={classes.grid} item>
                         <MyTextField id={"baseIndex"} label={"Index de Base"} onChange={handleChange} value={contract.baseIndex} type={"number"}/>
-                        <MyTextField id={"garanteeAmount"} label={"Montant de la Garantie en €"} onChange={handleChange} value={contract.garanteeAmount+' € '} disabled/>
-                        <MyDatePicker id={"signatureDate"} label={"Date de signature"} onChange={e => setContracts(c =>({...c,signatureDate:e}))} value={contract.signatureDate} />
+                        <MyTextField id={"guaranteeAmount"} label={"Montant de la Garantie en €"} onChange={handleChange} value={contract.guaranteeAmount+' € '} disabled/>
+                        <MyDatePicker id={"signatureDate"} label={"Date de signature"} onChange={e => setContracts(c =>({...c, signatureDate:e}))} value={contract.signatureDate} />
                     </Grid>
             </Grid>
             <Grid
@@ -239,7 +240,7 @@ const CreateContract = () => {
                         labelPlacement="top"
                     />
 
-                    <MyDatePicker id={"garanteePaidDate"} label={"Date de paimenent de la garantie"} onChange={e => setContracts(c =>({...c,garanteePaidDate:e}))} value={contract.garanteePaidDate} disabled={!contract.isGuaranteePaid} />
+                    <MyDatePicker id={"guaranteePaidDate"} label={"Date de paimenent de la garantie"} onChange={e => setContracts(c =>({...c, garanteePaidDate:e}))} value={contract.guaranteePaidDate} disabled={!contract.isGuaranteePaid} />
                 </Grid>
 
                 <Grid className={classes.grid} item>
@@ -249,8 +250,8 @@ const CreateContract = () => {
                         labelPlacement="top"
                     />
 
-                    <MyDatePicker id={"entryDate"} label={"Date d'entrée"} onChange={e => setContracts(c =>({...c,entryDate:e}))} value={contract.entryDate} />
-                    <MyDatePicker id={"releaseDate"} label={"Date de sortie"} onChange={e => setContracts(c =>({...c,releaseDate:e})) } value={contract.releaseDate} />
+                    <MyDatePicker id={"entryDate"} label={"Date d'entrée"} onChange={e => setContracts(c =>({...c, entryDate:e}))} value={contract.entryDate} />
+                    <MyDatePicker id={"releaseDate"} label={"Date de sortie"} onChange={e => setContracts(c =>({...c, releaseDate:e})) } value={contract.releaseDate} />
                 </Grid>
 
             </Grid>

@@ -28,7 +28,7 @@ import {
     AirlineSeatIndividualSuite as AirlineSeatIndividualSuiteIcon,
     Home as HomeIcon,
     HomeWork as HomeWorkIcon,
-    Dialpad as DialpadIcon,
+    Dialpad as DialPadIcon,
     GridOn as GridOnIcon,
     Description as DescriptionIcon,
 } from '@material-ui/icons';
@@ -61,7 +61,7 @@ const CreateProperty = () => {
 
     const stateDefaultValues = {
 
-        adress: "Rue Okay 32",
+        address: "Rue Okay 32",
         type: "house",
         floor: 0,
         nbRoom: 1,
@@ -77,8 +77,13 @@ const CreateProperty = () => {
         kitchenArea:28,
         rentCost:764,
         fixedChargesCost:234,
-        imageLink:null,
+        imageLink:"null",
         nbLocator:0,
+        
+        //
+        idProprio: 5,
+        longitude: 4.394311459132513,
+        latitude: 50.81950043121481
     }
 
     const [state,setState] = React.useState(stateDefaultValues);
@@ -98,7 +103,7 @@ const CreateProperty = () => {
         setState({...state, [eId]:e.target.value});
     }
 
-    const onChangenbRoom = e => {
+    const onChangeNbRoom = e => {
         let list = [];
         for (let i = 1; i <= e.target.value; i++){
             list.push(
@@ -115,7 +120,7 @@ const CreateProperty = () => {
 
     const fileSelectedHandler = e =>{
         let selFile = e.target.files[0].name;
-        setState(c => ({...c , imageLink: selFile}))
+        setState({...state , imageLink: selFile})
     }
 
     const handleOnSubmit = async e => {
@@ -133,7 +138,7 @@ const CreateProperty = () => {
     const clearBtn = e => setState(stateDefaultValues);
 
     const roomDetailInputChange = (e, roomId) => {
-        setState({...state, roomsDetails: state.roomsDetails.map((listRoom,index) => {
+        setState(c => ({...c, roomsDetails: state.roomsDetails.map((listRoom,index) => {
                 if (listRoom.nameRoom === roomId) {
                     return {...listRoom, area: e.target.value}
                 }
@@ -141,7 +146,7 @@ const CreateProperty = () => {
                     return {...listRoom, nameRoom: e.target.value}
                 }
                 return listRoom
-            }) })
+            }) }))
 
     }
 
@@ -182,7 +187,7 @@ const CreateProperty = () => {
                           spacing={2}
                     >
 
-                        <MyTextField id="adress" label="Adresse" value={state.adress} onChange={handleChange} required
+                        <MyTextField id="address" label="Adresse" value={state.address} onChange={handleChange} required
                                      InputProps={{
                                          startAdornment: (
                                              <InputAdornment position="start">
@@ -211,7 +216,7 @@ const CreateProperty = () => {
                                      InputProps={{
                                          startAdornment: (
                                              <InputAdornment position="start">
-                                                 <DialpadIcon />
+                                                 <DialPadIcon />
                                              </InputAdornment>
                                          ),
                                      }}
@@ -232,7 +237,7 @@ const CreateProperty = () => {
                                      }}
                         />
 
-                        <MyTextField id={"nbRoom"} label={"Nombre de Pièces"} type={"number"} value={state.nbRoom} onChange={onChangenbRoom} required
+                        <MyTextField id={"nbRoom"} label={"Nombre de Pièces"} type={"number"} value={state.nbRoom} onChange={onChangeNbRoom} required
                                      InputProps={{
                                          startAdornment: (
                                              <InputAdornment position="start">

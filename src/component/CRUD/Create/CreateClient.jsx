@@ -52,7 +52,7 @@ const CreateClient = () => {
         gender:'M', //Defaut
         name:"Rachid",
         surname:"Castafiore",
-        adress:"Rue Blabla 23",
+        address:"Rue Blabla 23",
         postalCode:"1090",
         city:"Bruxelles",
         country:"be",
@@ -60,8 +60,8 @@ const CreateClient = () => {
         phoneNumber:"0492164040",
 
         isClient:false, //Garant ou locataire
-        dateOfBirth:"0001-01-01",
-        age:0, //Defaut
+        dateOfBirth: Date.now(),
+        age:"",
         placeOfBirth:"",
         nationalRegister:"",
         haveAlreadyRentedHouse:false,
@@ -75,7 +75,7 @@ const CreateClient = () => {
         setClient({...client, [eId]:e.target.value});
     }
 
-    const handleisClient = () => {
+    const handleIsClient = () => {
         setClient({...client, isClient : !client.isClient});
     }
 
@@ -99,9 +99,9 @@ const CreateClient = () => {
         client.isClient ? dis.display="block" : dis.display="none";
 
         if(!client.isClient){
-            setClient(c=>({...c,
-                dateOfBirth:"0001-01-01",
-                age:0, //Defaut
+            setClient(c => ({...c,
+                dateOfBirth: Date.now(),
+                age:"",
                 placeOfBirth:"",
                 nationalRegister:"",
             }))
@@ -124,7 +124,7 @@ const CreateClient = () => {
         const dateClient = new Date(client.dateOfBirth);
         const getUTCDate = new Date(Date.now() - dateClient.getTime())
         const currentAge = getUTCDate.getUTCFullYear() - 1970;
-        setClient(c=>({...c, age:currentAge}));
+        setClient(c => ({...c, age: currentAge}));
     },[client.dateOfBirth]);
 
     //Changer le genre au changement de civilité
@@ -136,7 +136,7 @@ const CreateClient = () => {
         else{
             genderChange = 'F';
         }
-        setClient(c => ({...c, gender: genderChange}) );
+        setClient(c => ({...c, gender: genderChange}));
     },[client.civility])
 
     const clearBtn = e => setClient(initialStateClient);
@@ -243,7 +243,7 @@ const CreateClient = () => {
                   justify="center"
                   alignItems="center" 
                 >
-                    <MyTextField id="adress" label="Adresse" value={client.adress} onChange={handleChange} required
+                    <MyTextField id="address" label="Adresse" value={client.address} onChange={handleChange} required
                       InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -314,7 +314,7 @@ const CreateClient = () => {
                         labelPlacement="top"
                     />
                     <FormControlLabel
-                         control={ <Checkbox checked={client.isClient} onChange={handleisClient}/> }
+                         control={ <Checkbox checked={client.isClient} onChange={handleIsClient}/> }
                          label="Êtes vous un Client ? "
                          labelPlacement="top"
                     />
@@ -322,10 +322,10 @@ const CreateClient = () => {
                     <div id="isClient" style={{display:'block'}}>
                         Donc Remplissez les champs ici présent :
 
-                        <MyDatePicker id="dateOfBirth" label="Date de Naissance" value={client.dateOfBirth} onChange={e => setClient(c =>({...c,dateOfBirth:e}))} required={client.isClient}/>
-                        <MyTextField id="age" label="Votre age est : " type="number" disabled value={client.age} required={client.isClient} />
-                        <MyTextField id="placeOfBirth" label="Lieu de Naissance" value={client.placeOfBirth} onChange={handleChange} required={client.isClient}/>
-                        <MyTextField id="nationalRegister" label="N° Registre National" value={client.nationalRegister} onChange={handleChange} required={client.isClient}/>
+                        <MyDatePicker id="dateOfBirth" label="Date de Naissance :" value={client.dateOfBirth} onChange={e => setClient({...client, dateOfBirth:e})} required={client.isClient}/>
+                        <MyTextField id="age" label="Votre age est :" type="number" disabled value={client.age} required={client.isClient} />
+                        <MyTextField id="placeOfBirth" label="Lieu de Naissance :" value={client.placeOfBirth} onChange={handleChange} required={client.isClient}/>
+                        <MyTextField id="nationalRegister" label="N° Registre National :" value={client.nationalRegister} onChange={handleChange} required={client.isClient}/>
 
                     </div>
 

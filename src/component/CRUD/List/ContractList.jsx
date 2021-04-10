@@ -25,8 +25,10 @@ const ContractList = () => {
     const history = useHistory();
     const dispatch = useDispatch();
     const myContractList = useSelector(contr => contr.reducerContractKey.allContracts)
-    const myClientList = useSelector(cli => cli.reducerClientKey.allClient);
-    const myListofProps = useSelector(prop => prop.reducerPropertyKey.allProperties);
+   /* 
+        const myClientList = useSelector(cli => cli.reducerClientKey.allClient);
+        const myPropertiesList = useSelector(prop => prop.reducerPropertyKey.allProperties);
+    */
 
     const redirectCRUD = e => history.push(history.location.pathname+'/Contract/'+e.currentTarget.id);
     const redirectGenerate = async e =>{
@@ -84,17 +86,9 @@ const ContractList = () => {
       >
 
         {myContractList.map( contract => {
-            const cliCurrID = myClientList.findIndex(
-                cli => cli.idClient === contract.clientId
-            )
-            const cliCurr = myClientList[cliCurrID];
-            const propCurrId = myListofProps.findIndex(
-                cli => cli.idProperty === contract.propertyId
-            )
-            const propCurr = myListofProps[propCurrId];
-
-            // console.log('cliCurr : '+cliCurr.idClient);
-            // console.log('propCurr : '+propCurr.idProperty);
+            
+            const cliCurr = contract.client;
+            const propCurr = contract.property;
 
             return(
             <Grid

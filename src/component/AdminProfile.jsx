@@ -14,25 +14,7 @@ import {getAllPropertiesAction} from "../store/action/PropertyAction";
 import {getAllClientsAction} from "../store/action/ClientAction";
 import {getAllContractsAction} from "../store/action/ContractAction";
 
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Grid
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Grid>{children}</Grid>
-        </Box>
-      )}
-    </Grid>
-  );
-}
+let TABINDEX = 1;
 
 const AdminProfile = () => {
     const dispatch = useDispatch();
@@ -44,13 +26,31 @@ const AdminProfile = () => {
         console.log("FETCH DATAS ADMINPROFIL OK");
     },[dispatch]);
 
-  let defautvaluestate = 2;
-  const [value, setValue] = React.useState(defautvaluestate);
+    const [value, setValue] = React.useState(TABINDEX);
 
-  
-  const handleChangeTab = (e, newValue) => {
-    setValue(newValue);
-  };
+    const handleChangeTab = (e, newValue) => {
+        setValue(newValue);
+        TABINDEX = newValue;
+    };
+
+    const TabPanel = (props) => {
+        const { children, index, ...other } = props;
+
+        return (
+            <Grid
+                role="tabpanel"
+                hidden={value !== index}
+                id={`simple-tabpanel-${index}`}
+                {...other}
+            >
+                {value === index && (
+                    <Box p={3}>
+                        <Grid>{children}</Grid>
+                    </Box>
+                )}
+            </Grid>
+        );
+    }
 
   return (
     <>
@@ -65,9 +65,7 @@ const AdminProfile = () => {
             <Tab label="Documents" />
           </Tabs>
       </AppBar>
-      <Grid
-
-      >
+      <Grid>
         <TabPanel value={value} index={0}>
           <PropertyList />
         </TabPanel>

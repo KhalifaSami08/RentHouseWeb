@@ -23,7 +23,7 @@ import {deleteContractAction} from "../../../store/action/ContractAction";
 
 const ClientList = () => {
     const history = useHistory();
-    const myListofClients = useSelector(cli => cli.reducerClientKey.allClient);
+    const myClientsList = useSelector(cli => cli.reducerClientKey.allClient);
 
     const allContr = useSelector(contr => contr.reducerContractKey?.allContracts);
     const dispatch = useDispatch();
@@ -39,10 +39,10 @@ const ClientList = () => {
     const deleteClient = idClient => {
         console.log(idClient);
 
-        const cliCurrID = myListofClients.findIndex(
+        const cliCurrID = myClientsList.findIndex(
             cli => cli.idClient === idClient
         )
-        const cliCurr = myListofClients[cliCurrID];
+        const cliCurr = myClientsList[cliCurrID];
 
         if(cliCurr.haveAlreadyRentedHouse){
             if(window.confirm(
@@ -93,7 +93,7 @@ const ClientList = () => {
         spacing={2}
       >
 
-        {myListofClients.map( client => {
+        {myClientsList.map(client => {
           const cliId = client.idClient;
           return(
             <Grid item
@@ -107,7 +107,7 @@ const ClientList = () => {
                         {client.name +' '+client.surname}
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p">
-                        {client.adress}
+                        {client.address}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
